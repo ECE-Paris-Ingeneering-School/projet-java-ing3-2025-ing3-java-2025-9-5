@@ -1,6 +1,8 @@
 CREATE DATABASE ShoppingDB;
 USE ShoppingDB;
 
+
+
 -- Users: Stores information about customers (new and returning) and admins
 CREATE TABLE Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
