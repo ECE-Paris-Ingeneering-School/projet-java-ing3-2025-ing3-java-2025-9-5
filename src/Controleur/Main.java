@@ -1,4 +1,12 @@
 package Controleur;
 
+import Vue.Menu;
+
+import javax.swing.*;
+
 public class Main {
+    public static void main (String[] args){
+        SwingUtilities.invokeLater(Menu::new);
+
+    }
 }
