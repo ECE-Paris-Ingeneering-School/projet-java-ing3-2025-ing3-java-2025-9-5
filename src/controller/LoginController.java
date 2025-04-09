@@ -26,17 +26,20 @@ public class LoginController {
         } else if (!user.getPassword().equals(password)) {
             view.showMessage("Mot de passe incorrect.");
         } else {
-            String userRole = user.getUserType();
-            // Création et affichage de la fenêtre d'accueil
-            HomeFrame home = new HomeFrame(userRole);
-            // Ajout de l'écouteur pour ouvrir la page des produits
-            home.addProductsButtonListener(e -> {
-                ProductView productView = new ProductView();
-                productView.setVisible(true);
-            });
-            home.setVisible(true);
-            // Optionnellement, fermer la fenêtre de connexion
-            view.getTopLevelAncestor().setVisible(false);
+            String userType = user.getUserType();
+            view.showMessage("Connexion réussie en tant que " + userType);
+            if (userType.equalsIgnoreCase("client")) {
+                HomeFrame home = new HomeFrame(userType);
+                home.addProductsButtonListener(e -> {
+                    ProductView productView = new ProductView();
+                    productView.setVisible(true);
+                });
+                home.setVisible(true);
+                view.getTopLevelAncestor().setVisible(false);
+            } else if (userType.equalsIgnoreCase("admin")) {
+                // Pour administrateur, redirigez vers une interface spécifique.
+                view.showMessage("Interface Admin à développer.");
+            }
         }
     }
 

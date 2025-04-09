@@ -14,21 +14,20 @@ public class HomeFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Panneau supérieur pour le statut
+        // Panneau supérieur pour afficher le statut
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         statusLabel = new JLabel("Connecté en tant que : " + userRole);
         topPanel.add(statusLabel);
 
-        // Panneau central avec bouton pour accéder aux produits
-        JPanel contentPanel = new JPanel(new BorderLayout());
+        // Panneau central avec bouton d'accès aux produits
+        JPanel centerPanel = new JPanel(new FlowLayout());
         productsButton = new JButton("Consulter les produits");
-        contentPanel.add(productsButton, BorderLayout.CENTER);
+        centerPanel.add(productsButton);
 
         add(topPanel, BorderLayout.NORTH);
-        add(contentPanel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
     }
 
-    // Méthode pour ajouter un écouteur sur le bouton
     public void addProductsButtonListener(ActionListener listener) {
         productsButton.addActionListener(listener);
     }
