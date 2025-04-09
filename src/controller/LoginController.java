@@ -4,7 +4,7 @@ import model.User;
 import model.UserDAO;
 import view.HomeFrame;
 import view.LoginView;
-import javax.swing.*;
+import view.ProductView;
 
 public class LoginController {
     private LoginView view;
@@ -14,7 +14,6 @@ public class LoginController {
     }
 
     public void login(String email, String password) {
-        // Vérification des champs vides
         if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
             view.showMessage("Veuillez remplir tous les champs.");
             return;
@@ -28,15 +27,16 @@ public class LoginController {
             view.showMessage("Mot de passe incorrect.");
         } else {
             String userRole = user.getUserType();
-            // Ouvrir une nouvelle fenêtre indiquant le statut de connexion
+            // Création et affichage de la fenêtre d'accueil
             HomeFrame home = new HomeFrame(userRole);
+            // Ajout de l'écouteur pour ouvrir la page des produits
+            home.addProductsButtonListener(e -> {
+                ProductView productView = new ProductView();
+                productView.setVisible(true);
+            });
             home.setVisible(true);
-            // Facultatif : fermer la fenêtre de connexion
-            // Si la vue est contenue dans une fenêtre (JFrame), vous pouvez la fermer via :
-            JFrame parentFrame = (JFrame) javax.swing.SwingUtilities.getWindowAncestor(view);
-            if (parentFrame != null) {
-                parentFrame.dispose();
-            }
+            // Optionnellement, fermer la fenêtre de connexion
+            view.getTopLevelAncestor().setVisible(false);
         }
     }
 
@@ -57,10 +57,8 @@ public class LoginController {
             view.showMessage("Cet email est déjà utilisé.");
             return;
         }
-        // Création d'un objet User et ajout dans la base de données
         User newUser = new User(email, password, "client");
         UserDAO.addUser(newUser);
-
         view.showMessage("Compte créé avec succès ! Vous êtes identifié en tant que client.");
     }
 }
