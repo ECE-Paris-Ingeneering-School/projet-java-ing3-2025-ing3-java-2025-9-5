@@ -38,9 +38,8 @@ public class ProductView extends JFrame {
         for (Product product : products) {
             ProductPanel pp = new ProductPanel(product);
             pp.getAddToCartButton().addActionListener(e -> {
-                Cart.getInstance().addProduct(product); // ⬅ panier mis à jour
+                Cart.getInstance().addProduct(product);
                 JOptionPane.showMessageDialog(ProductView.this, product.getName() + " ajouté au panier !");
-                // Tu pourras ici ajouter réellement le produit à un panier partagé
             });
             productsPanel.add(pp);
         }
