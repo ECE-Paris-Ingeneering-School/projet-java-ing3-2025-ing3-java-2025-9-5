@@ -6,9 +6,12 @@ import java.util.List;
 import model.Product;
 import model.ProductDAO;
 import model.Cart;
+import model.User;
 
 public class ProductView extends JFrame {
-    public ProductView() {
+    private User currentUser;
+    public ProductView(User currentUser) {
+        this.currentUser = currentUser;
         setTitle("Liste des Produits");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -26,7 +29,7 @@ public class ProductView extends JFrame {
 
         // Action du bouton panier
         cartButton.addActionListener(e -> {
-            CartView cartView = new CartView();
+            CartView cartView = new CartView(currentUser);
             cartView.setVisible(true);
         });
 

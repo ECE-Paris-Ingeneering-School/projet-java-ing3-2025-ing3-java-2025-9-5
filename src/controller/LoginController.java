@@ -5,6 +5,7 @@ import model.UserDAO;
 import view.HomeFrame;
 import view.LoginView;
 import view.ProductView;
+import view.CartView;
 
 public class LoginController {
     private LoginView view;
@@ -31,13 +32,16 @@ public class LoginController {
             if (userType.equalsIgnoreCase("client")) {
                 HomeFrame home = new HomeFrame(userType);
                 home.addProductsButtonListener(e -> {
-                    ProductView productView = new ProductView();
+                    ProductView productView = new ProductView(user);
                     productView.setVisible(true);
+                });
+                home.addCartButtonListener(e -> {
+                    CartView cartView = new CartView(user);
+                    cartView.setVisible(true);
                 });
                 home.setVisible(true);
                 view.getTopLevelAncestor().setVisible(false);
             } else if (userType.equalsIgnoreCase("admin")) {
-                // Pour administrateur, redirigez vers une interface spécifique.
                 view.showMessage("Interface Admin à développer.");
             }
         }

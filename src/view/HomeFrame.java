@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 public class HomeFrame extends JFrame {
     private JLabel statusLabel;
     private JButton productsButton;
+    private JButton cartButton;
 
     public HomeFrame(String userRole) {
         setTitle("Accueil - Application Shopping");
@@ -14,12 +15,13 @@ public class HomeFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Panneau supérieur pour afficher le statut
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         statusLabel = new JLabel("Connecté en tant que : " + userRole);
         topPanel.add(statusLabel);
 
-        // Panneau central avec bouton d'accès aux produits
+        cartButton = new JButton("Voir le panier 🛒");
+        topPanel.add(cartButton);
+
         JPanel centerPanel = new JPanel(new FlowLayout());
         productsButton = new JButton("Consulter les produits");
         centerPanel.add(productsButton);
@@ -30,5 +32,9 @@ public class HomeFrame extends JFrame {
 
     public void addProductsButtonListener(ActionListener listener) {
         productsButton.addActionListener(listener);
+    }
+
+    public void addCartButtonListener(ActionListener listener) {
+        cartButton.addActionListener(listener);
     }
 }
