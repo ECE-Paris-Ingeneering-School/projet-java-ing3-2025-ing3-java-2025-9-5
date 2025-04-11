@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 
 
-public class Menu extends JFrame {
+public class FenetreLogin extends JFrame {
     // Attributs
     private JTextField EmailField;
     private JTextField PasswordField;
@@ -14,7 +14,7 @@ public class Menu extends JFrame {
     private JButton SignButton;
 
     // Constructeures
-    public Menu() {
+    public FenetreLogin() {
         setTitle("Connexion");
         setSize(300,300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

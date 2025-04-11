@@ -2,9 +2,9 @@ CREATE DATABASE ShoppingDB;
 USE ShoppingDB;
 
 
-
 -- Users: Stores information about customers (new and returning) and admins
-CREATE TABLE Users (
+DROP TABLE IF EXISTS `Users`;
+CREATE TABLE IF NOT EXISTS Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -14,7 +14,8 @@ CREATE TABLE Users (
 );
 
 --Shopping Cart
-CREATE TABLE ShoppingCart (
+DROP TABLE IF EXISTS `ShoppingCart`;
+CREATE TABLE IF NOT EXISTS ShoppingCart (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -24,7 +25,8 @@ CREATE TABLE ShoppingCart (
 );
 
 -- Products: Stores information about items available for purchase
-CREATE TABLE Products (
+DROP TABLE IF EXISTS `Products`;
+CREATE TABLE IF NOT EXISTS Products (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     brand VARCHAR(50) NOT NULL,
@@ -35,7 +37,8 @@ CREATE TABLE Products (
 );
 
 -- Orders: Records customer orders
-CREATE TABLE Orders (
+DROP TABLE IF EXISTS `Orders`;
+CREATE TABLE IF NOT EXISTS Orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -44,7 +47,8 @@ CREATE TABLE Orders (
 );
 
 -- OrderDetails: Stores the products in each order
-CREATE TABLE OrderDetails (
+DROP TABLE IF EXISTS `OrderDetails`;
+CREATE TABLE IF NOT EXISTS OrderDetails (
     order_detail_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT,
     product_id INT,
@@ -55,7 +59,8 @@ CREATE TABLE OrderDetails (
 );
 
 -- Discounts: Defines available discounts
-CREATE TABLE Discounts (
+DROP TABLE IF EXISTS `Discounts`;
+CREATE TABLE IF NOT EXISTS Discounts (
     discount_id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT,
     bulk_quantity INT,
@@ -64,7 +69,8 @@ CREATE TABLE Discounts (
 );
 
 -- ActivityLogs: Keeps track of admin operations
-CREATE TABLE ActivityLogs (
+DROP TABLE IF EXISTS `ActivityLogs`;
+CREATE TABLE IF NOT EXISTS ActivityLogs (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
     admin_id INT,
     action VARCHAR(255),
