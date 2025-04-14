@@ -1,12 +1,13 @@
-package view;
+package View;
+
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import model.Product;
-import model.ProductDAO;
-import model.Cart;
-import model.User;
+import Model.Product;
+import Model.ProductDAO;
+import Model.Cart;
+import Model.User;
 
 public class ProductView extends JFrame {
     private User currentUser;
