@@ -1,10 +1,10 @@
-package model;
+package Model;
 import java.sql.*;
 
 public class UserDAO {
-    private static final String URL = "jdbc:mysql://localhost:3306/shopping";
+    private static final String URL = "jdbc:mysql://localhost:3306/shoppingdb";
     private static final String USER = "root"; // Modifier si besoin
-    private static final String PASSWORD = ""; // Modifier si besoin
+    private static final String PASSWORD = "root"; // Modifier si besoin
 
     static {
         try {
