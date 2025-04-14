@@ -43,7 +43,7 @@ public class ProductPanel extends JPanel {
         add(detailsPanel, BorderLayout.CENTER);
 
         // Bouton "Ajouter au panier" avec un smiley panier
-        addToCartButton = new JButton("Ajouter au panier 🛒");
+        addToCartButton = new JButton("Ajouter au panier");
         add(addToCartButton, BorderLayout.SOUTH);
     }
 
