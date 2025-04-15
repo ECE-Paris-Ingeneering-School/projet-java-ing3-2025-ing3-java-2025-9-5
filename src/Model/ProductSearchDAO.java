@@ -20,7 +20,7 @@ public class ProductSearchDAO {
     /**
      * Recherche des produits selon les critères suivants :
      * @param nameKeyword mot-clé à rechercher dans le nom du produit (utilisation de LIKE)
-     * @param brand marque du produit (égalité)
+     * @param brand mot-clé à rechercher dans la marque du produit (utilisation de LIKE)
      * @param minPrice prix minimum (>=)
      * @param maxPrice prix maximum (<=). Si <= 0, ce critère n'est pas appliqué.
      * @return la liste des produits correspondants
