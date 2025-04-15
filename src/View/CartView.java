@@ -1,13 +1,14 @@
-package view;
+package View;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import model.Cart;
-import model.OrderDAO;
-import model.Product;
-import model.User;
+import Model.Cart;
+import Model.CartItem;
+import Model.OrderDAO;
+import Model.Product;
+import Model.User;
 import java.util.List;
 
 public class CartView extends JFrame {
@@ -24,21 +25,27 @@ public class CartView extends JFrame {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
 
+        // Panneau pour afficher les produits du panier
         productsPanel = new JPanel();
         productsPanel.setLayout(new BoxLayout(productsPanel, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(productsPanel);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
+        // Panneau du bas pour le total et les boutons d'actions
         JPanel bottomPanel = new JPanel(new BorderLayout());
         totalLabel = new JLabel();
         totalLabel.setFont(new Font("Arial", Font.BOLD, 16));
         bottomPanel.add(totalLabel, BorderLayout.WEST);
 
+        // Panneau pour les boutons
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton clearCartButton = new JButton("Vider le panier");
-        clearCartButton.addActionListener(e -> {
-            Cart.getInstance().clear();
-            refreshCart();
+        clearCartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Cart.getInstance().clear();
+                refreshCart();
+            }
         });
         JButton orderButton = new JButton("Passer commande");
         orderButton.addActionListener(new ActionListener() {
@@ -66,18 +73,25 @@ public class CartView extends JFrame {
 
     public void refreshCart() {
         productsPanel.removeAll();
-        List<Product> cartProducts = Cart.getInstance().getProducts();
-        if (cartProducts.isEmpty()) {
+        // Utilisation de getItems() qui renvoie une List<CartItem>
+        List<CartItem> items = Cart.getInstance().getItems();
+        if (items.isEmpty()) {
             productsPanel.add(new JLabel("🛒 Votre panier est vide."));
         } else {
-            for (Product product : cartProducts) {
+            for (CartItem item : items) {
+                Product product = item.getProduct();
+                int quantity = item.getQuantity();
                 JPanel productRow = new JPanel(new BorderLayout());
-                JLabel productLabel = new JLabel(product.getName() + " - €" + product.getPrice());
+                JLabel productLabel = new JLabel(product.getName() + " (x" + quantity + ") - €" + product.getPrice());
                 productRow.add(productLabel, BorderLayout.CENTER);
                 JButton removeButton = new JButton("Retirer");
-                removeButton.addActionListener(e -> {
-                    Cart.getInstance().removeProduct(product);
-                    refreshCart();
+                removeButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        // Pour simplifier, retirer le produit entier
+                        Cart.getInstance().removeProduct(product);
+                        refreshCart();
+                    }
                 });
                 productRow.add(removeButton, BorderLayout.EAST);
                 productsPanel.add(productRow);

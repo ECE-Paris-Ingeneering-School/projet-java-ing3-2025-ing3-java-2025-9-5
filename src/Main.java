@@ -1,8 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-import view.LoginView;
-import view.WelcomeView;
-import controller.LoginController;
+import View.LoginView;
+import View.WelcomeView;
+import Controller.LoginController;
 public class Main extends JFrame {
     private CardLayout cardLayout;
     private JPanel mainPanel;

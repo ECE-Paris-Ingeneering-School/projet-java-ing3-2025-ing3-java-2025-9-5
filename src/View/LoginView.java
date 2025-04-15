@@ -1,8 +1,8 @@
-package view;
+package View;
 
 import javax.swing.*;
 import java.awt.*;
-import controller.LoginController;
+import Controller.LoginController;
 
 public class LoginView extends JPanel {
     private JTextField emailField;

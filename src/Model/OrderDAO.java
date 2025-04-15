@@ -1,9 +1,7 @@
-package model;
+package Model;
 
 import java.sql.*;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class OrderDAO {
     private static final String URL = "jdbc:mysql://localhost:3306/shopping";
@@ -13,7 +11,7 @@ public class OrderDAO {
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch(ClassNotFoundException e){
+        } catch (ClassNotFoundException e){
             e.printStackTrace();
         }
     }
@@ -25,48 +23,43 @@ public class OrderDAO {
         ResultSet generatedKeys = null;
         try {
             conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            conn.setAutoCommit(false); // début de transaction
+            conn.setAutoCommit(false); // Début de transaction
+
+            double totalAmount = cart.getTotalPrice();
+            // Vérifier que le panier n'est pas vide
+            if (totalAmount <= 0) {
+                System.out.println("Le panier est vide.");
+                return false;
+            }
 
             // Insertion dans Orders
             String orderQuery = "INSERT INTO Orders (user_id, total_amount) VALUES (?, ?)";
             orderStmt = conn.prepareStatement(orderQuery, Statement.RETURN_GENERATED_KEYS);
             orderStmt.setInt(1, user.getUserId());
-            double totalAmount = cart.getTotalPrice();
             orderStmt.setDouble(2, totalAmount);
             int affectedRows = orderStmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new SQLException("Création de la commande échouée, aucune ligne ajoutée.");
+                throw new SQLException("Échec de la création de la commande, aucune ligne insérée.");
             }
+
             generatedKeys = orderStmt.getGeneratedKeys();
             int orderId = -1;
             if (generatedKeys.next()) {
                 orderId = generatedKeys.getInt(1);
             } else {
-                throw new SQLException("Création de la commande échouée, aucun ID récupéré.");
+                throw new SQLException("Échec de la création de la commande, aucun ID généré.");
             }
 
-            // Calculer la quantité de chaque produit (on regroupe par product_id)
-            Map<Integer, Integer> productQuantities = new HashMap<>();
-            List<Product> cartProducts = cart.getProducts();
-            for (Product p : cartProducts) {
-                int id = p.getProductId();
-                productQuantities.put(id, productQuantities.getOrDefault(id, 0) + 1);
-            }
+            // On récupère la liste des CartItem
+            List<CartItem> items = cart.getItems();
 
-            // Insertion dans OrderDetails
+            // Insertion dans OrderDetails pour chaque item
             String detailQuery = "INSERT INTO OrderDetails (order_id, product_id, quantity, price_per_unit) VALUES (?, ?, ?, ?)";
             orderDetailStmt = conn.prepareStatement(detailQuery);
-            for (Map.Entry<Integer, Integer> entry : productQuantities.entrySet()) {
-                int productId = entry.getKey();
-                int quantity = entry.getValue();
-                double unitPrice = 0;
-                // Recherche du prix de base parmi les produits (supposons qu'ils sont homogènes)
-                for (Product p : cartProducts) {
-                    if (p.getProductId() == productId) {
-                        unitPrice = p.getPrice();
-                        break;
-                    }
-                }
+            for (CartItem item : items) {
+                int productId = item.getProduct().getProductId();
+                int quantity = item.getQuantity();
+                double unitPrice = item.getProduct().getPrice();
                 orderDetailStmt.setInt(1, orderId);
                 orderDetailStmt.setInt(2, productId);
                 orderDetailStmt.setInt(3, quantity);
