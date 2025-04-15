@@ -32,7 +32,7 @@ public class ProductSearchDAO {
             query.append(" AND name LIKE ?");
         }
         if (brand != null && !brand.trim().isEmpty()) {
-            query.append(" AND brand = ?");
+            query.append(" AND brand LIKE ?");
         }
         if (minPrice >= 0) {
             query.append(" AND price >= ?");
@@ -49,7 +49,7 @@ public class ProductSearchDAO {
                 stmt.setString(paramIndex++, "%" + nameKeyword + "%");
             }
             if (brand != null && !brand.trim().isEmpty()) {
-                stmt.setString(paramIndex++, brand);
+                stmt.setString(paramIndex++, "%" + brand + "%");
             }
             if (minPrice >= 0) {
                 stmt.setDouble(paramIndex++, minPrice);
