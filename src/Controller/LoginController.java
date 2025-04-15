@@ -6,6 +6,7 @@ import View.HomeFrame;
 import View.LoginView;
 import View.ProductView;
 import View.CartView;
+import View.AdminProductView; // Ajoutez cet import
 
 public class LoginController {
     private LoginView view;
@@ -42,7 +43,9 @@ public class LoginController {
                 home.setVisible(true);
                 view.getTopLevelAncestor().setVisible(false);
             } else if (userType.equalsIgnoreCase("admin")) {
-                view.showMessage("Interface Admin à développer.");
+                AdminProductView adminView = new AdminProductView();
+                adminView.setVisible(true);
+                view.getTopLevelAncestor().setVisible(false);
             }
         }
     }
@@ -68,5 +71,4 @@ public class LoginController {
         UserDAO.addUser(newUser);
         view.showMessage("Compte créé avec succès ! Vous êtes identifié en tant que client.");
     }
-
 }

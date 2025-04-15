@@ -7,7 +7,7 @@ import Model.Product;
 
 public class ProductTableModel extends AbstractTableModel {
     private List<Product> products;
-    private final String[] columnNames = {"ID", "Nom", "Marque", "Prix", "Description"};
+    private final String[] columnNames = {"ID", "Nom", "Marque", "Prix", "Description", "Image Path"};
 
     public ProductTableModel() {
         products = new ArrayList<>();
@@ -37,6 +37,7 @@ public class ProductTableModel extends AbstractTableModel {
             case 2: return p.getBrand();
             case 3: return p.getPrice();
             case 4: return p.getDescription();
+            case 5: return p.getImagePath();
             default: return null;
         }
     }
