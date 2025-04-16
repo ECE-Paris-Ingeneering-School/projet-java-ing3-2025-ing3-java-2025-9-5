@@ -5,10 +5,10 @@ import java.util.List;
 
 public class Cart {
     private static Cart instance;
-    private List<Product> products;
+    private List<CartItem> items;
 
     private Cart() {
-        products = new ArrayList<>();
+        items = new ArrayList<>();
     }
 
     public static Cart getInstance() {
@@ -18,23 +18,34 @@ public class Cart {
         return instance;
     }
 
-    public void addProduct(Product product) {
-        products.add(product);
+    public List<CartItem> getItems() {
+        return items;
+    }
+
+    // Ajoute le produit avec la quantité choisie. Si le produit existe déjà, on incrémente la quantité.
+    public void addProduct(Product product, int quantity) {
+        for (CartItem item : items) {
+            if (item.getProduct().getProductId() == product.getProductId()) {
+                item.setQuantity(item.getQuantity() + quantity);
+                return;
+            }
+        }
+        items.add(new CartItem(product, quantity));
     }
 
     public void removeProduct(Product product) {
-        products.remove(product);
-    }
-
-    public List<Product> getProducts() {
-        return products;
+        items.removeIf(item -> item.getProduct().getProductId() == product.getProductId());
     }
 
     public void clear() {
-        products.clear();
+        items.clear();
     }
 
     public double getTotalPrice() {
-        return products.stream().mapToDouble(Product::getPrice).sum();
+        double total = 0;
+        for (CartItem item : items) {
+            total += item.getProduct().getPrice() * item.getQuantity();
+        }
+        return total;
     }
 }

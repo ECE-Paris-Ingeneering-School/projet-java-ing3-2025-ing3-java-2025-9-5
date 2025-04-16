@@ -1,12 +1,13 @@
 package Controller;
 
-import Model.User;
-import Model.UserDAO;
-import View.HomeFrame;
-import View.LoginView;
-import View.ProductView;
-import View.CartView;
-import View.AdminProductView;
+import model.User;
+import model.UserDAO;
+import view.HomeFrame;
+import view.LoginView;
+import view.ProductView;
+import view.CartView;
+import view.AdminProductView;
+main
 
 public class LoginController {
     private LoginView view;
