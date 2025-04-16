@@ -1,4 +1,4 @@
-package controller;
+package Controller;
 
 import model.User;
 import model.UserDAO;
@@ -6,7 +6,8 @@ import view.HomeFrame;
 import view.LoginView;
 import view.ProductView;
 import view.CartView;
-import view.AdminProductView; // Ajoutez cet import
+import view.AdminProductView;
+main
 
 public class LoginController {
     private LoginView view;

@@ -1,15 +1,16 @@
-package view;
+package View;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+
 import model.Cart;
 import model.CartItem;
 import model.OrderDAO;
 import model.Product;
 import model.User;
-import java.util.List;
 
 public class CartView extends JFrame {
     private JPanel productsPanel;

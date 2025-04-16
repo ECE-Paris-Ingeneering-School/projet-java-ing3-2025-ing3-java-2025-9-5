@@ -1,8 +1,10 @@
-package view;
+package View;
 
 import javax.swing.*;
 import java.awt.*;
-import model.Product;
+
+import Model.Product;
+
 
 public class ProductPanel extends JPanel {
     private Product product;
@@ -50,6 +52,8 @@ public class ProductPanel extends JPanel {
         addToCartButton = new JButton("Ajouter au panier 🛒");
         add(addToCartButton, BorderLayout.SOUTH);
     }
+
+
 
     public JButton getAddToCartButton() {
         return addToCartButton;
