@@ -1,7 +1,7 @@
 package main;
 
-import Controller.ProductSearchController;
-import View.ProductSearchView;
+import controller.ProductSearchController;
+import view.ProductSearchView;
 import javax.swing.SwingUtilities;
 
 public class SearchMain {
