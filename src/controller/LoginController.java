@@ -43,7 +43,9 @@ public class LoginController {
                 home.setVisible(true);
                 view.getTopLevelAncestor().setVisible(false);
             } else if (userType.equalsIgnoreCase("admin")) {
-                view.showMessage("Interface Admin à développer.");
+                AdminProductView adminView = new AdminProductView();
+                adminView.setVisible(true);
+                view.getTopLevelAncestor().setVisible(false);
             }
         }
     }
