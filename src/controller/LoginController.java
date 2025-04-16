@@ -6,6 +6,7 @@ import View.HomeFrame;
 import View.LoginView;
 import View.ProductView;
 import View.CartView;
+import View.AdminProductView;
 
 public class LoginController {
     private LoginView view;
