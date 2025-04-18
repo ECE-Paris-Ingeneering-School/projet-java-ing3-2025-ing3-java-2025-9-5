@@ -1,4 +1,4 @@
-**Merge 1 : **
+**Merge 1 :**
 
 Mise à jour du code principal
 Fonctionnalités réalisées :
