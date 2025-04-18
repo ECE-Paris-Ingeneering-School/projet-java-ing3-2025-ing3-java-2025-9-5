@@ -1,9 +1,9 @@
-package View;
+package view;
 
 import javax.swing.*;
 import java.awt.*;
 
-import Model.Product;
+import model.Product;
 
 
 public class ProductPanel extends JPanel {

@@ -1,66 +1,68 @@
-package Controller;
+package controller;
 
 import model.User;
 import model.UserDAO;
-import view.HomeFrame;
-import view.LoginView;
-import view.ProductView;
-import view.CartView;
-import view.AdminProductView;
-main
+import view.*;
+
+import javax.swing.*;
 
 public class LoginController {
     private LoginView view;
 
     public LoginController(LoginView view) {
         this.view = view;
+        this.view.setController(this);
     }
 
     public void login(String email, String password) {
-        if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty()) {
             view.showMessage("Veuillez remplir tous les champs.");
             return;
         }
-
         User user = UserDAO.findUserByEmail(email);
-
         if (user == null) {
             view.showMessage("Email non trouvé. Veuillez créer un compte.");
-        } else if (!user.getPassword().equals(password)) {
+            return;
+        }
+        if (!user.getPassword().equals(password)) {
             view.showMessage("Mot de passe incorrect.");
+            return;
+        }
+
+        String role = user.getUserType();
+        view.showMessage("Connexion réussie en tant que " + role);
+        // Ferme la card login
+        SwingUtilities.getWindowAncestor(view).setVisible(false);
+
+        if (role.equalsIgnoreCase("client")) {
+            HomeFrame home = new HomeFrame("Client");
+            home.addProductsButtonListener(e -> new ProductView(user).setVisible(true));
+            home.addCartButtonListener(e -> new CartView(user).setVisible(true));
+            home.addLogoutButtonListener(e -> {
+                home.dispose();
+                reopenLogin();
+            });
+            home.setVisible(true);
         } else {
-            String userType = user.getUserType();
-            view.showMessage("Connexion réussie en tant que " + userType);
-            if (userType.equalsIgnoreCase("client")) {
-                HomeFrame home = new HomeFrame(userType);
-                home.addProductsButtonListener(e -> {
-                    ProductView productView = new ProductView(user);
-                    productView.setVisible(true);
-                });
-                home.addCartButtonListener(e -> {
-                    CartView cartView = new CartView(user);
-                    cartView.setVisible(true);
-                });
-                home.setVisible(true);
-                view.getTopLevelAncestor().setVisible(false);
-            } else if (userType.equalsIgnoreCase("admin")) {
-                AdminProductView adminView = new AdminProductView();
-                adminView.setVisible(true);
-                view.getTopLevelAncestor().setVisible(false);
-            }
+            AdminProductView admin = new AdminProductView();
+            admin.addLogoutButtonListener(e -> {
+                admin.dispose();
+                reopenLogin();
+            });
+            admin.setVisible(true);
         }
     }
 
     public void createAccount(String email, String password) {
-        if (email == null || email.isEmpty()) {
+        if (email.isEmpty()) {
             view.showMessage("Veuillez entrer un email.");
             return;
         }
-        if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+        if (!email.matches("^[\\w._%+-]+@[\\w.-]+\\.[A-Za-z]{2,}$")) {
             view.showMessage("Adresse email invalide.");
             return;
         }
-        if (password == null || password.isEmpty()) {
+        if (password.isEmpty()) {
             view.showMessage("Veuillez entrer un mot de passe.");
             return;
         }
@@ -68,8 +70,22 @@ public class LoginController {
             view.showMessage("Cet email est déjà utilisé.");
             return;
         }
-        User newUser = new User(email, password, "client");
-        UserDAO.addUser(newUser);
-        view.showMessage("Compte créé avec succès ! Vous êtes identifié en tant que client.");
+        User u = new User(email, password, "client");
+        UserDAO.addUser(u);
+        view.showMessage("Compte créé avec succès !");
+    }
+
+    private void reopenLogin() {
+        // Rouvre la fenêtre login
+        view.getTopLevelAncestor().disable(); // au cas où
+        LoginView lv = new LoginView();
+        LoginController lc = new LoginController(lv);
+        lv.showMessage("Déconnecté, reconnectez-vous.");
+        JFrame frame = new JFrame("Connexion");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(lv);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }

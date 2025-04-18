@@ -11,6 +11,7 @@ import model.ProductDAO;
 public class AdminProductView extends JFrame {
     private JTable productTable;
     private ProductTableModel tableModel;
+    private JButton logoutButton;
     private JTextField nameField, brandField, priceField, descriptionField, imagePathField;
     private JButton addButton, removeButton;
 
@@ -26,15 +27,20 @@ public class AdminProductView extends JFrame {
     private void initComponents() {
         setLayout(new BorderLayout());
 
-        // Tableau des produits
+        // --- Bandeau supérieur avec Déconnexion ---
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        logoutButton = new JButton("Déconnexion");
+        topPanel.add(logoutButton);
+        add(topPanel, BorderLayout.NORTH);
+
+        // --- Tableau des produits ---
         tableModel = new ProductTableModel();
         productTable = new JTable(tableModel);
-        JScrollPane tableScrollPane = new JScrollPane(productTable);
-        add(tableScrollPane, BorderLayout.CENTER);
+        add(new JScrollPane(productTable), BorderLayout.CENTER);
 
-        // Panneau de contrôle en bas : zones de saisie et boutons d'action
-        JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new GridLayout(3, 4, 10, 10));
+        // --- Panneau de contrôle en bas ---
+        JPanel controlPanel = new JPanel(new GridLayout(3, 4, 10, 10));
+        controlPanel.setBorder(BorderFactory.createTitledBorder("Ajouter / Retirer un produit"));
 
         controlPanel.add(new JLabel("Nom:"));
         nameField = new JTextField();
@@ -52,7 +58,7 @@ public class AdminProductView extends JFrame {
         descriptionField = new JTextField();
         controlPanel.add(descriptionField);
 
-        controlPanel.add(new JLabel("Image Path:"));
+        controlPanel.add(new JLabel("Image Path (facultatif):"));
         imagePathField = new JTextField();
         controlPanel.add(imagePathField);
 
@@ -64,65 +70,114 @@ public class AdminProductView extends JFrame {
         add(controlPanel, BorderLayout.SOUTH);
 
         // Action pour ajouter un produit
-        addButton.addActionListener(new ActionListener(){
+        addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Validation des champs obligatoires
                 String name = nameField.getText().trim();
                 String brand = brandField.getText().trim();
-                double price = 0;
-                try {
-                    price = Double.parseDouble(priceField.getText().trim());
-                } catch(NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(AdminProductView.this, "Prix invalide.");
+                String desc = descriptionField.getText().trim();
+                String imgPath = imagePathField.getText().trim(); // facultatif
+
+                if (name.isEmpty() || brand.isEmpty() || desc.isEmpty()) {
+                    JOptionPane.showMessageDialog(
+                            AdminProductView.this,
+                            "Veuillez remplir les champs Nom, Marque et Description.",
+                            "Champs manquants",
+                            JOptionPane.WARNING_MESSAGE
+                    );
                     return;
                 }
-                String description = descriptionField.getText().trim();
-                String imagePath = imagePathField.getText().trim();
-                // Vous pouvez également gérer le stock ici (stock initial, par exemple 100)
-                Product newProduct = new Product(name, brand, price, imagePath, description);
+
+                double price;
+                try {
+                    price = Double.parseDouble(priceField.getText().trim());
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(
+                            AdminProductView.this,
+                            "Prix invalide. Veuillez entrer un nombre.",
+                            "Erreur de prix",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
+
+                // Création et insertion
+                Product newProduct = new Product(name, brand, price, imgPath, desc);
                 boolean success = ProductDAO.addProduct(newProduct);
-                if(success) {
-                    JOptionPane.showMessageDialog(AdminProductView.this, "Produit ajouté avec succès !");
+                if (success) {
+                    JOptionPane.showMessageDialog(
+                            AdminProductView.this,
+                            "Produit ajouté avec succès !",
+                            "Succès",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                     clearFields();
                     loadProducts();
                 } else {
-                    JOptionPane.showMessageDialog(AdminProductView.this, "Erreur lors de l'ajout du produit.");
+                    JOptionPane.showMessageDialog(
+                            AdminProductView.this,
+                            "Erreur lors de l'ajout du produit.",
+                            "Erreur",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         });
 
         // Action pour retirer un produit
-        removeButton.addActionListener(new ActionListener(){
+        removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = productTable.getSelectedRow();
-                if(selectedRow == -1) {
-                    JOptionPane.showMessageDialog(AdminProductView.this, "Sélectionnez un produit à retirer.");
+                int sel = productTable.getSelectedRow();
+                if (sel == -1) {
+                    JOptionPane.showMessageDialog(
+                            AdminProductView.this,
+                            "Sélectionnez un produit à retirer.",
+                            "Aucun produit sélectionné",
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                    return;
+                }
+                int productId = (Integer) tableModel.getValueAt(sel, 0);
+                boolean success = ProductDAO.removeProduct(productId);
+                if (success) {
+                    JOptionPane.showMessageDialog(
+                            AdminProductView.this,
+                            "Produit retiré avec succès !",
+                            "Succès",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                    loadProducts();
                 } else {
-                    // Supposons que l'ID du produit se trouve dans la première colonne
-                    int productId = (Integer) tableModel.getValueAt(selectedRow, 0);
-                    boolean success = ProductDAO.removeProduct(productId);
-                    if(success) {
-                        JOptionPane.showMessageDialog(AdminProductView.this, "Produit retiré avec succès !");
-                        loadProducts();
-                    } else {
-                        JOptionPane.showMessageDialog(AdminProductView.this, "Erreur lors du retrait du produit.");
-                    }
+                    JOptionPane.showMessageDialog(
+                            AdminProductView.this,
+                            "Erreur lors du retrait du produit.",
+                            "Erreur",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         });
     }
 
+    /** Charge et affiche les produits depuis la BDD */
     private void loadProducts() {
         List<Product> products = ProductDAO.getAllProducts();
         tableModel.setProducts(products);
     }
 
+    /** Vide les champs de saisie */
     private void clearFields() {
         nameField.setText("");
         brandField.setText("");
         priceField.setText("");
         descriptionField.setText("");
         imagePathField.setText("");
+    }
+
+    /** Permet au contrôleur d’ajouter un listener au bouton Déconnexion */
+    public void addLogoutButtonListener(ActionListener listener) {
+        logoutButton.addActionListener(listener);
     }
 }
