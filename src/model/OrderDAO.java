@@ -4,10 +4,12 @@ import java.sql.*;
 import java.util.List;
 
 public class OrderDAO {
+    // Informations de connexion à la base de données
     private static final String URL = "jdbc:mysql://localhost:3306/shopping";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
+    // Chargement du driver JDBC
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -16,6 +18,7 @@ public class OrderDAO {
         }
     }
 
+    // Méthode pour enregistrer une commande
     public static boolean placeOrder(User user, Cart cart) {
         Connection conn = null;
         PreparedStatement orderStmt = null;
@@ -42,6 +45,7 @@ public class OrderDAO {
                 throw new SQLException("Échec de la création de la commande, aucune ligne insérée.");
             }
 
+            // Récupération de l'ID généré de la commande
             generatedKeys = orderStmt.getGeneratedKeys();
             int orderId = -1;
             if (generatedKeys.next()) {
@@ -66,10 +70,13 @@ public class OrderDAO {
                 orderDetailStmt.setDouble(4, unitPrice);
                 orderDetailStmt.addBatch();
             }
+
+            // Exécution des insertions en lot
             orderDetailStmt.executeBatch();
             conn.commit();
             return true;
         } catch (SQLException e) {
+            // Annulation si une erreur survient
             if (conn != null) {
                 try {
                     conn.rollback();
@@ -79,6 +86,7 @@ public class OrderDAO {
             }
             e.printStackTrace();
         } finally {
+            // Fermeture des ressources
             try { if (generatedKeys != null) generatedKeys.close(); } catch(SQLException ex){}
             try { if (orderStmt != null) orderStmt.close(); } catch(SQLException ex){}
             try { if (orderDetailStmt != null) orderDetailStmt.close(); } catch(SQLException ex){}
