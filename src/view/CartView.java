@@ -6,11 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+// Ajoutez cet import
+import model.Product;
+
 import model.Cart;
 import model.CartItem;
 import model.OrderDAO;
-import model.Product;
 import model.User;
+import view.InvoiceView;
 
 public class CartView extends JFrame {
     private JPanel productsPanel;
@@ -41,40 +44,43 @@ public class CartView extends JFrame {
         // Panneau pour les boutons
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton clearCartButton = new JButton("Vider le panier");
-        clearCartButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        clearCartButton.addActionListener(e -> {
+            Cart.getInstance().clear();
+            refreshCart();
+        });
+
+        JButton orderButton = new JButton("Passer commande");
+        orderButton.addActionListener(e -> {
+            boolean success = OrderDAO.placeOrder(user, Cart.getInstance());
+            if (success) {
+                JOptionPane.showMessageDialog(CartView.this, "Commande passée avec succès !");
                 Cart.getInstance().clear();
                 refreshCart();
+            } else {
+                JOptionPane.showMessageDialog(CartView.this, "Erreur lors du passage de la commande.");
             }
         });
-        JButton orderButton = new JButton("Passer commande");
-        orderButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean success = OrderDAO.placeOrder(user, Cart.getInstance());
-                if (success) {
-                    JOptionPane.showMessageDialog(CartView.this, "Commande passée avec succès !");
-                    Cart.getInstance().clear();
-                    refreshCart();
-                } else {
-                    JOptionPane.showMessageDialog(CartView.this, "Erreur lors du passage de la commande.");
-                }
-            }
+
+        JButton invoiceButton = new JButton("Générer facture");
+        invoiceButton.addActionListener(e -> {
+            InvoiceView.showInvoiceForUser(user.getUserId());
         });
+
+        // Ajout des trois boutons
         buttonPanel.add(clearCartButton);
         buttonPanel.add(orderButton);
+        buttonPanel.add(invoiceButton);
+
         bottomPanel.add(buttonPanel, BorderLayout.EAST);
 
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
-        add(mainPanel);
+        setContentPane(mainPanel);
 
         refreshCart();
     }
 
     public void refreshCart() {
         productsPanel.removeAll();
-        // Utilisation de getItems() qui renvoie une List<CartItem>
         List<CartItem> items = Cart.getInstance().getItems();
         if (items.isEmpty()) {
             productsPanel.add(new JLabel("🛒 Votre panier est vide."));
@@ -83,16 +89,15 @@ public class CartView extends JFrame {
                 Product product = item.getProduct();
                 int quantity = item.getQuantity();
                 JPanel productRow = new JPanel(new BorderLayout());
-                JLabel productLabel = new JLabel(product.getName() + " (x" + quantity + ") - €" + product.getPrice());
+                JLabel productLabel = new JLabel(
+                        product.getName() + " (x" + quantity + ") - €" + product.getPrice()
+                );
                 productRow.add(productLabel, BorderLayout.CENTER);
+
                 JButton removeButton = new JButton("Retirer");
-                removeButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // Pour simplifier, retirer le produit entier
-                        Cart.getInstance().removeProduct(product);
-                        refreshCart();
-                    }
+                removeButton.addActionListener(e -> {
+                    Cart.getInstance().removeProduct(product);
+                    refreshCart();
                 });
                 productRow.add(removeButton, BorderLayout.EAST);
                 productsPanel.add(productRow);
