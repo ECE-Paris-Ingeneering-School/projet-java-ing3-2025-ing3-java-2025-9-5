@@ -38,6 +38,11 @@ public class LoginController {
             HomeFrame home = new HomeFrame("Client");
             home.addProductsButtonListener(e -> new ProductView(user).setVisible(true));
             home.addCartButtonListener(e -> new CartView(user).setVisible(true));
+            home.addHistoryButtonListener(e -> {
+                OrderHistoryView history = new OrderHistoryView(user.getUserId());
+                history.setVisible(true);
+            });
+
             home.addLogoutButtonListener(e -> {
                 home.dispose();
                 reopenLogin();

@@ -9,6 +9,7 @@ public class HomeFrame extends JFrame {
     private JButton productsButton;
     private JButton cartButton;
     private JButton logoutButton;  // ← nouveau bouton
+    private JButton historyButton;
 
     public HomeFrame(String userRole) {
         setTitle("Accueil - Application Shopping");
@@ -23,6 +24,9 @@ public class HomeFrame extends JFrame {
 
         cartButton = new JButton("Voir le panier 🛒");
         topPanel.add(cartButton);
+
+        historyButton = new JButton("Historique 📜");
+        topPanel.add(historyButton);
 
         logoutButton = new JButton("Déconnexion");  // création du bouton
         topPanel.add(logoutButton);
@@ -47,5 +51,8 @@ public class HomeFrame extends JFrame {
 
     public void addLogoutButtonListener(ActionListener listener) {
         logoutButton.addActionListener(listener);
+    }
+    public void addHistoryButtonListener(ActionListener l) {
+        historyButton.addActionListener(l);
     }
 }
