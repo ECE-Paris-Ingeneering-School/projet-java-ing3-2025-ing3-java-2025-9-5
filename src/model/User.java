@@ -20,6 +20,8 @@ public class User {
         this.password = password;
         this.userType = userType;
     }
+
+    // Getters
     public int getUserId() {
         return userId;
     }
