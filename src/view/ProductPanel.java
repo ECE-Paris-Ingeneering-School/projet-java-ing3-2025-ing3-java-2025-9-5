@@ -23,7 +23,7 @@ public class ProductPanel extends JPanel {
         // Image du produit
         imageLabel = new JLabel();
         ImageIcon icon = new ImageIcon(product.getImagePath());
-        // Redimensionnement de l'image (optionnel)
+        // Redimensionnement de l'image
         Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
         imageLabel.setIcon(new ImageIcon(img));
         add(imageLabel, BorderLayout.WEST);
@@ -42,7 +42,7 @@ public class ProductPanel extends JPanel {
         detailsPanel.add(descriptionLabel);
         add(detailsPanel, BorderLayout.CENTER);
 
-        // Bouton "Ajouter au panier" avec un smiley panier
+        // Bouton "Ajouter au panier"
         addToCartButton = new JButton("Ajouter au panier");
         add(addToCartButton, BorderLayout.SOUTH);
     }
