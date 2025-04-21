@@ -5,8 +5,6 @@ import model.UserDAO;
 import view.*;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class LoginController {
     private LoginView view;
@@ -51,12 +49,47 @@ public class LoginController {
             });
             home.setVisible(true);
         } else { // admin
-            AdminProductView admin = new AdminProductView();
-            admin.addLogoutButtonListener(e -> {
-                admin.dispose();
+            AdminView adminUsers = new AdminView();
+            adminUsers.addLogoutButtonListener(e -> {
+                adminUsers.dispose();
                 reopenLogin();
             });
-            admin.setVisible(true);
+            adminUsers.addDeleteListener(e -> {
+                int id = adminUsers.getSelectedUserId();
+                if (id == -1) {
+                    JOptionPane.showMessageDialog(adminUsers, "Sélectionnez d'abord un utilisateur.");
+                    return;
+                }
+                if (UserDAO.deleteUser(id)) {
+                    JOptionPane.showMessageDialog(adminUsers, "Utilisateur supprimé.");
+                    adminUsers.loadUsers();
+                }
+            });
+            adminUsers.addPromoteListener(e -> {
+                int id = adminUsers.getSelectedUserId();
+                if (id == -1) {
+                    JOptionPane.showMessageDialog(adminUsers, "Sélectionnez d'abord un utilisateur.");
+                    return;
+                }
+                String currentRole = adminUsers.getSelectedUserRole();
+                String newRole = currentRole.equalsIgnoreCase("admin") ? "client" : "admin";
+                if (UserDAO.updateUserRole(id, newRole)) {
+                    JOptionPane.showMessageDialog(adminUsers, "Rôle mis à jour en " + newRole);
+                    adminUsers.loadUsers();
+                }
+            });
+
+            adminUsers.addHistoryListener(e -> {
+                int id = adminUsers.getSelectedUserId();
+                if (id == -1) {
+                    JOptionPane.showMessageDialog(adminUsers, "Sélectionnez d'abord un utilisateur.");
+                    return;
+                }
+                User u = UserDAO.findUserById(id);
+                OrderHistoryView hv = new OrderHistoryView(u);
+                hv.setVisible(true);
+            });
+            adminUsers.setVisible(true);
         }
     }
 

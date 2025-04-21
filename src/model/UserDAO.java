@@ -1,5 +1,8 @@
 package model;
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO {
     private static final String URL = "jdbc:mysql://localhost:3306/shopping";
@@ -74,5 +77,54 @@ public class UserDAO {
             e.printStackTrace();
         }
         return null;
+    }
+    /** Récupère tous les utilisateurs enregistrés */
+    public static List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM Users";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                users.add(new User(
+                        rs.getInt("user_id"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getString("user_type"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    /** Supprime un utilisateur par son ID */
+    public static boolean deleteUser(int userId) {
+        String sql = "DELETE FROM Users WHERE user_id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /** Met à jour le rôle d'un utilisateur ("client" ou "admin") */
+    public static boolean updateUserRole(int userId, String newRole) {
+        String sql = "UPDATE Users SET user_type = ? WHERE user_id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newRole);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
