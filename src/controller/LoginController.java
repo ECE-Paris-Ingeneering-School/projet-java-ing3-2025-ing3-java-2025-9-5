@@ -39,7 +39,7 @@ public class LoginController {
             home.addProductsButtonListener(e -> new ProductView(user).setVisible(true));
             home.addCartButtonListener(e -> new CartView(user).setVisible(true));
             home.addHistoryButtonListener(e -> {
-                OrderHistoryView history = new OrderHistoryView(user.getUserId());
+                OrderHistoryView history = new OrderHistoryView(user);
                 history.setVisible(true);
             });
 

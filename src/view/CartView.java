@@ -6,9 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-// Ajoutez cet import
-import model.Product;
 
+import model.Product;
 import model.Cart;
 import model.CartItem;
 import model.OrderDAO;
@@ -23,7 +22,7 @@ public class CartView extends JFrame {
     public CartView(User user) {
         this.user = user;
         setTitle("Mon Panier");
-        setSize(400, 500);
+        setSize(600, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -54,6 +53,8 @@ public class CartView extends JFrame {
             boolean success = OrderDAO.placeOrder(user, Cart.getInstance());
             if (success) {
                 JOptionPane.showMessageDialog(CartView.this, "Commande passée avec succès !");
+                // Affiche immédiatement la fenêtre facture pour ce client
+                InvoiceView.showInvoiceForUser(user);
                 Cart.getInstance().clear();
                 refreshCart();
             } else {
@@ -63,7 +64,7 @@ public class CartView extends JFrame {
 
         JButton invoiceButton = new JButton("Générer facture");
         invoiceButton.addActionListener(e -> {
-            InvoiceView.showInvoiceForUser(user.getUserId());
+            InvoiceView.showInvoiceForUser(user);
         });
 
         // Ajout des trois boutons

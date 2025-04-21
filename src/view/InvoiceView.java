@@ -10,7 +10,7 @@ import model.Order;
 import model.OrderDetail;
 import model.OrderHistoryDAO;
 import model.UserDAO;
-
+import model.User;
 
 public class InvoiceView extends JFrame {
     public InvoiceView(Order order, List<OrderDetail> details, String clientName) {
@@ -81,17 +81,18 @@ public class InvoiceView extends JFrame {
     }
 
     /** Méthode utilitaire pour ouvrir directement depuis un contrôleur client */
-    public static void showInvoiceForUser(int userId) {
-        // On récupère la dernière commande
-        Order order = OrderHistoryDAO.getOrdersForUser(userId).stream()
-                .findFirst()
-                .orElse(null);
-        if (order == null) {
-            JOptionPane.showMessageDialog(null, "Aucune commande trouvée.", "Erreur", JOptionPane.WARNING_MESSAGE);
+    public static void showInvoiceForUser(User user) {
+        List<Order> orders = OrderHistoryDAO.getOrdersForUser(user.getUserId());
+        if (orders.isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Aucune commande trouvée.",
+                    "Erreur",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
+        Order order = orders.get(0);
         List<OrderDetail> details = OrderHistoryDAO.getOrderDetails(order.getOrderId());
-        InvoiceView iv = new InvoiceView(order, details, UserDAO.findUserById(userId).getFirstName());
+        InvoiceView iv = new InvoiceView(order, details, user.getFirstName());
         iv.setVisible(true);
     }
 }
