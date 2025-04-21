@@ -1,4 +1,4 @@
-// view/AdminUserView.java
+// view/AdminView.java
 package view;
 
 import javax.swing.*;
@@ -10,6 +10,7 @@ import model.User;
 import model.UserDAO;
 import model.Product;
 import model.ProductDAO;
+import model.DiscountDAO;
 
 public class AdminView extends JFrame {
     private JTable userTable;
@@ -23,10 +24,12 @@ public class AdminView extends JFrame {
     private ProductTableModel productTableModel;
     private JTextField nameField, brandField, priceField, descriptionField, imagePathField;
     private JButton addButton, removeButton;
+    private JTextField discountQuantityField, discountPercentField;
+    private JButton createDiscountButton;
 
     public AdminView() {
         super("Gestion Produits et Utilisateurs - Admin");
-        setSize(1000, 600);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         initComponents();
@@ -47,10 +50,11 @@ public class AdminView extends JFrame {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setResizeWeight(0.5);
 
-        // --- Partie gauche : produits avec formulaire ---
-        JPanel leftPanel = new JPanel(new BorderLayout());
+        // Tableau produits (gauche)
         productTableModel = new ProductTableModel();
         productTable = new JTable(productTableModel);
+
+        JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.add(new JScrollPane(productTable), BorderLayout.CENTER);
 
         JPanel productControlPanel = new JPanel(new GridLayout(3, 4, 10, 10));
@@ -70,10 +74,26 @@ public class AdminView extends JFrame {
         productControlPanel.add(addButton);
         productControlPanel.add(removeButton);
 
-        leftPanel.add(productControlPanel, BorderLayout.SOUTH);
+        JPanel discountPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+        discountPanel.setBorder(BorderFactory.createTitledBorder("Créer une réduction"));
+        discountPanel.add(new JLabel("Quantité min:"));
+        discountQuantityField = new JTextField();
+        discountPanel.add(discountQuantityField);
+        discountPanel.add(new JLabel("% de réduction:"));
+        discountPercentField = new JTextField();
+        discountPanel.add(discountPercentField);
+        createDiscountButton = new JButton("Appliquer la réduction");
+        discountPanel.add(new JLabel(""));
+        discountPanel.add(createDiscountButton);
+
+        JPanel bottomLeftPanel = new JPanel(new BorderLayout());
+        bottomLeftPanel.add(productControlPanel, BorderLayout.CENTER);
+        bottomLeftPanel.add(discountPanel, BorderLayout.SOUTH);
+
+        leftPanel.add(bottomLeftPanel, BorderLayout.SOUTH);
         splitPane.setLeftComponent(leftPanel);
 
-        // --- Partie droite : utilisateurs ---
+        // Panneau utilisateur (droite)
         JPanel rightPanel = new JPanel(new BorderLayout());
         tableModel = new UserTableModel();
         userTable = new JTable(tableModel);
@@ -91,7 +111,7 @@ public class AdminView extends JFrame {
         splitPane.setRightComponent(rightPanel);
         add(splitPane, BorderLayout.CENTER);
 
-        // --- Actions ---
+        // Actions
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String name = nameField.getText().trim();
@@ -115,7 +135,7 @@ public class AdminView extends JFrame {
                 Product newProduct = new Product(name, brand, price, imgPath, desc);
                 boolean success = ProductDAO.addProduct(newProduct);
                 if (success) {
-                    JOptionPane.showMessageDialog(AdminView.this, "Produit ajouté avec succès !", "Succès", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(AdminView.this, "Produit ajouté avec succès !", "Succès", JOptionPane.INFORMATION_MESSAGE);
                     clearFields();
                     loadProducts();
                 } else {
@@ -134,10 +154,39 @@ public class AdminView extends JFrame {
                 int productId = (Integer) productTableModel.getValueAt(sel, 0);
                 boolean success = ProductDAO.removeProduct(productId);
                 if (success) {
-                    JOptionPane.showMessageDialog(AdminView.this, "Produit retiré avec succès !", "Succès", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(AdminView.this, "Produit retiré avec succès !", "Succès", JOptionPane.INFORMATION_MESSAGE);
                     loadProducts();
                 } else {
                     JOptionPane.showMessageDialog(AdminView.this, "Erreur lors du retrait du produit.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        createDiscountButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedProductId = getSelectedProductId();
+                if (selectedProductId == -1) {
+                    JOptionPane.showMessageDialog(AdminView.this, "Veuillez sélectionner un produit.", "Erreur", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                int quantity = getDiscountQuantity();
+                double percent = getDiscountPercentage();
+                if (quantity <= 0 || percent <= 0) {
+                    JOptionPane.showMessageDialog(AdminView.this, "Veuillez saisir des valeurs valides pour la quantité et la réduction.", "Erreur", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                Product product = ProductDAO.findProductById(selectedProductId);
+                if (product == null) {
+                    JOptionPane.showMessageDialog(AdminView.this, "Produit introuvable.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                double bulkPrice = product.getPrice() * (1 - percent / 100);
+                boolean success = DiscountDAO.addDiscount(selectedProductId, quantity, bulkPrice);
+                if (success) {
+                    JOptionPane.showMessageDialog(AdminView.this, "Réduction appliquée avec succès !", "Succès", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(AdminView.this, "Erreur lors de l'application de la réduction.", "Erreur", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -173,11 +222,36 @@ public class AdminView extends JFrame {
     public void addLogoutButtonListener(ActionListener l) {
         logoutButton.addActionListener(l);
     }
+    public void addCreateDiscountListener(ActionListener l) {
+        createDiscountButton.addActionListener(l);
+    }
 
     public int getSelectedUserId() {
         int row = userTable.getSelectedRow();
         if (row == -1) return -1;
         return (Integer) tableModel.getValueAt(row, 0);
+    }
+
+    public int getSelectedProductId() {
+        int row = productTable.getSelectedRow();
+        if (row == -1) return -1;
+        return (Integer) productTableModel.getValueAt(row, 0);
+    }
+
+    public int getDiscountQuantity() {
+        try {
+            return Integer.parseInt(discountQuantityField.getText().trim());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    public double getDiscountPercentage() {
+        try {
+            return Double.parseDouble(discountPercentField.getText().trim());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
     public String getSelectedUserRole() {
