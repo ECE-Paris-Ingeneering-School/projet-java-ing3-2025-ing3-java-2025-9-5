@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import controller.LoginController;
 
 public class LoginView extends JPanel {
@@ -11,8 +12,8 @@ public class LoginView extends JPanel {
     private LoginController controller;
 
     public LoginView() {
-        super(new GridLayout(4, 2, 10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        super(new GridLayout(3, 2, 10, 10));
+        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
 
         add(new JLabel("Email :"));
         emailField = new JTextField();
@@ -23,37 +24,38 @@ public class LoginView extends JPanel {
         add(passwordField);
 
         createAccountButton = new JButton("Créer un compte");
-        add(createAccountButton);
-
         loginButton = new JButton("Se connecter");
+        add(createAccountButton);
         add(loginButton);
 
-        // Les listeners appelleront le contrôleur une fois injecté
-        loginButton.addActionListener(e -> {
-            if (controller != null) {
-                controller.login(
-                        emailField.getText().trim(),
-                        new String(passwordField.getPassword())
-                );
-            }
-        });
+        // Au clic, on appelle startCreateAccount, pas directement createAccount
         createAccountButton.addActionListener(e -> {
-            if (controller != null) {
-                controller.createAccount(
-                        emailField.getText().trim(),
-                        new String(passwordField.getPassword())
-                );
-            }
+            String email = emailField.getText().trim();
+            String pass  = new String(passwordField.getPassword());
+            controller.startCreateAccount(email, pass);
+        });
+
+        loginButton.addActionListener(e -> {
+            controller.login(
+                    emailField.getText().trim(),
+                    new String(passwordField.getPassword())
+            );
         });
     }
 
-    /** Injecte le contrôleur et initialise les actions */
+    // Setters pour pré‑remplir/modifier les champs
+    public void setEmail(String email) {
+        emailField.setText(email);
+    }
+    public void setPassword(String password) {
+        passwordField.setText(password);
+    }
+
     public void setController(LoginController controller) {
         this.controller = controller;
     }
 
-    /** Affiche une boîte de dialogue d’info/erreur */
-    public void showMessage(String message) {
-        JOptionPane.showMessageDialog(this, message);
+    public void showMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg);
     }
 }

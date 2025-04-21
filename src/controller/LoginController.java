@@ -5,6 +5,8 @@ import model.UserDAO;
 import view.*;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class LoginController {
     private LoginView view;
@@ -31,8 +33,9 @@ public class LoginController {
 
         String role = user.getUserType();
         view.showMessage("Connexion réussie en tant que " + role);
-        // Ferme la card login
-        SwingUtilities.getWindowAncestor(view).setVisible(false);
+        // Ferme la fenêtre de login
+        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(view);
+        topFrame.dispose();
 
         if (role.equalsIgnoreCase("client")) {
             HomeFrame home = new HomeFrame("Client");
@@ -42,13 +45,12 @@ public class LoginController {
                 OrderHistoryView history = new OrderHistoryView(user);
                 history.setVisible(true);
             });
-
             home.addLogoutButtonListener(e -> {
                 home.dispose();
                 reopenLogin();
             });
             home.setVisible(true);
-        } else {
+        } else { // admin
             AdminProductView admin = new AdminProductView();
             admin.addLogoutButtonListener(e -> {
                 admin.dispose();
@@ -58,34 +60,54 @@ public class LoginController {
         }
     }
 
-    public void createAccount(String email, String password) {
-        if (email.isEmpty()) {
-            view.showMessage("Veuillez entrer un email.");
-            return;
-        }
-        if (!email.matches("^[\\w._%+-]+@[\\w.-]+\\.[A-Za-z]{2,}$")) {
-            view.showMessage("Adresse email invalide.");
-            return;
-        }
-        if (password.isEmpty()) {
-            view.showMessage("Veuillez entrer un mot de passe.");
-            return;
-        }
+    public void startCreateAccount(String email, String password) {
+
+        final CreateAccountView cav = new CreateAccountView(email, password);
+        cav.addConfirmListener(e -> finishCreateAccount(cav));
+        cav.setVisible(true);
+
         if (UserDAO.findUserByEmail(email) != null) {
-            view.showMessage("Cet email est déjà utilisé.");
+            view.showMessage("Un utilisateur existe déjà à cette adresse.");
             return;
         }
-        User u = new User(email, password, "client");
-        UserDAO.addUser(u);
-        view.showMessage("Compte créé avec succès !");
     }
 
+    /** Traite la validation du formulaire avancé */
+    private void finishCreateAccount(CreateAccountView cav) {
+        String email     = cav.getEmail();
+        String password  = cav.getPassword();
+        String firstName = cav.getFirstName();
+        String lastName  = cav.getLastName();
+        cav.dispose();
+
+        // Validation
+        if (firstName.isEmpty() || lastName.isEmpty()) {
+            JOptionPane.showMessageDialog(cav,
+                    "Prénom et nom obligatoires.",
+                    "Champs manquants",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        // Création
+        User u = new User(email, password, "client", firstName, lastName);
+        if (UserDAO.addUser(u)) {
+            JOptionPane.showMessageDialog(cav,
+                    "Compte créé ! Veuillez vous reconnecter.");
+            // on remet à jour le formulaire principal
+            view.setEmail(email);
+            view.setPassword(password);
+            cav.dispose();               // ferme CreateAccountView
+        } else {
+            JOptionPane.showMessageDialog(cav,
+                    "Erreur lors de la création du compte.",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
     private void reopenLogin() {
         // Rouvre la fenêtre login
-        view.getTopLevelAncestor().disable(); // au cas où
         LoginView lv = new LoginView();
-        LoginController lc = new LoginController(lv);
-        lv.showMessage("Déconnecté, reconnectez-vous.");
+        new LoginController(lv);
         JFrame frame = new JFrame("Connexion");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setContentPane(lv);

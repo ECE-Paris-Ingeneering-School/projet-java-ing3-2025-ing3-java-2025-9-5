@@ -20,6 +20,14 @@ public class User {
         this.lastName = lastName;
     }
 
+    public User(String email, String password, String userType, String firstName, String lastName) {
+        this.email = email;
+        this.password = password;
+        this.userType = userType;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     /**
      * Constructeur sans userId, lors de la création d'un nouveau compte
      */
