@@ -1,3 +1,4 @@
+// view/CartView.java
 package view;
 
 import javax.swing.*;
@@ -6,13 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-
-import model.Product;
 import model.Cart;
 import model.CartItem;
+import model.DiscountDAO;
 import model.OrderDAO;
+import model.Product;
 import model.User;
-import view.InvoiceView;
 
 public class CartView extends JFrame {
     private JPanel productsPanel;
@@ -53,7 +53,7 @@ public class CartView extends JFrame {
             boolean success = OrderDAO.placeOrder(user, Cart.getInstance());
             if (success) {
                 JOptionPane.showMessageDialog(CartView.this, "Commande passée avec succès !");
-                // Affiche immédiatement la fenêtre facture pour ce client
+                // Affiche immédiatement la fenêtre facture, incluant réductions
                 InvoiceView.showInvoiceForUser(user);
                 Cart.getInstance().clear();
                 refreshCart();
@@ -63,17 +63,13 @@ public class CartView extends JFrame {
         });
 
         JButton invoiceButton = new JButton("Générer facture");
-        invoiceButton.addActionListener(e -> {
-            InvoiceView.showInvoiceForUser(user);
-        });
+        invoiceButton.addActionListener(e -> InvoiceView.showInvoiceForUser(user));
 
-        // Ajout des trois boutons
         buttonPanel.add(clearCartButton);
         buttonPanel.add(orderButton);
         buttonPanel.add(invoiceButton);
 
         bottomPanel.add(buttonPanel, BorderLayout.EAST);
-
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
         setContentPane(mainPanel);
 
@@ -83,29 +79,56 @@ public class CartView extends JFrame {
     public void refreshCart() {
         productsPanel.removeAll();
         List<CartItem> items = Cart.getInstance().getItems();
+        double grandTotal = 0;
+
         if (items.isEmpty()) {
             productsPanel.add(new JLabel("🛒 Votre panier est vide."));
         } else {
             for (CartItem item : items) {
-                Product product = item.getProduct();
-                int quantity = item.getQuantity();
+                Product p = item.getProduct();
+                int qty = item.getQuantity();
+                double unitPrice = p.getPrice();
+
+                // Vérification promotion
+                int threshold = DiscountDAO.getBulkQuantity(p.getProductId());
+                double discountedUnit = DiscountDAO.getDiscountedPrice(p.getProductId(), qty);
+                double lineTotal;
+
+                JLabel lineLabel;
+                if (threshold > 0 && qty >= threshold && discountedUnit > 0) {
+                    // promotion applicable
+                    lineTotal = qty * discountedUnit;
+                    grandTotal += lineTotal;
+                    String text = String.format(
+                            "<html>%s x%d : <strike>€%.2f</strike> <span style='color:red;'>€%.2f</span> = €%.2f</html>",
+                            p.getName(), qty, unitPrice, discountedUnit, lineTotal
+                    );
+                    lineLabel = new JLabel(text);
+                } else {
+                    lineTotal = qty * unitPrice;
+                    grandTotal += lineTotal;
+                    String text = String.format(
+                            "%s x%d : €%.2f = €%.2f",
+                            p.getName(), qty, unitPrice, lineTotal
+                    );
+                    lineLabel = new JLabel(text);
+                }
+
                 JPanel productRow = new JPanel(new BorderLayout());
-                JLabel productLabel = new JLabel(
-                        product.getName() + " (x" + quantity + ") - €" + product.getPrice()
-                );
-                productRow.add(productLabel, BorderLayout.CENTER);
+                productRow.add(lineLabel, BorderLayout.CENTER);
 
                 JButton removeButton = new JButton("Retirer");
                 removeButton.addActionListener(e -> {
-                    Cart.getInstance().removeProduct(product);
+                    Cart.getInstance().removeProduct(p);
                     refreshCart();
                 });
                 productRow.add(removeButton, BorderLayout.EAST);
+
                 productsPanel.add(productRow);
             }
         }
-        double total = Cart.getInstance().getTotalPrice();
-        totalLabel.setText("Total: €" + String.format("%.2f", total));
+
+        totalLabel.setText(String.format("Total: €%.2f", grandTotal));
         productsPanel.revalidate();
         productsPanel.repaint();
     }

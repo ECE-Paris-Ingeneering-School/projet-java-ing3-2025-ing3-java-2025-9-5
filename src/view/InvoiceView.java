@@ -1,3 +1,4 @@
+// view/InvoiceView.java
 package view;
 
 import javax.swing.*;
@@ -9,8 +10,9 @@ import java.util.List;
 import model.Order;
 import model.OrderDetail;
 import model.OrderHistoryDAO;
-import model.UserDAO;
 import model.User;
+import model.DiscountDAO;
+import model.UserDAO;
 
 public class InvoiceView extends JFrame {
     public InvoiceView(Order order, List<OrderDetail> details, String clientName) {
@@ -40,17 +42,34 @@ public class InvoiceView extends JFrame {
         content.add(infoPanel);
 
         // 3) Tableau des lignes
-        String[] cols = {"Réf", "Description", "Qté", "PU (€)", "Total (€)"};
+        String[] cols = {"Réf", "Description", "Qté", "PU (€)", "Total normal (€)", "Promo PU (€)", "Total promo (€)"};
         DefaultTableModel tm = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         for (OrderDetail d : details) {
+            int productId = d.getProductId();
+            String desc = d.getProductName();
+            int qty = d.getQuantity();
+            double unitPrice = d.getPricePerUnit();
+            double normalLine = unitPrice * qty;
+            int threshold = DiscountDAO.getBulkQuantity(productId);
+            double promoPrice = DiscountDAO.getDiscountedPrice(productId, qty);
+            String promoPUstr = "-";
+            double promoLine;
+            if (threshold > 0 && promoPrice > 0) {
+                promoPUstr = String.format("%.2f", promoPrice);
+                promoLine = promoPrice * qty;
+            } else {
+                promoLine = normalLine;
+            }
             tm.addRow(new Object[]{
-                    d.getProductId(),
-                    d.getProductName(),
-                    d.getQuantity(),
-                    String.format("%.2f", d.getPricePerUnit()),
-                    String.format("%.2f", d.getQuantity() * d.getPricePerUnit())
+                    productId,
+                    desc,
+                    qty,
+                    String.format("%.2f", unitPrice),
+                    String.format("%.2f", normalLine),
+                    promoPUstr,
+                    String.format("%.2f", promoLine)
             });
         }
         JTable table = new JTable(tm);
@@ -59,8 +78,19 @@ public class InvoiceView extends JFrame {
         content.add(new JScrollPane(table));
 
         // 4) Totaux
+        double totalPromo = 0;
+        for (OrderDetail d : details) {
+            int pid = d.getProductId();
+            int qty = d.getQuantity();
+            double up = d.getPricePerUnit();
+            double lineNormal = up * qty;
+            int thr = DiscountDAO.getBulkQuantity(pid);
+            double pp = DiscountDAO.getDiscountedPrice(pid, qty);
+            double linePromo = (thr > 0 && pp > 0) ? pp * qty : lineNormal;
+            totalPromo += linePromo;
+        }
         JPanel totalPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JLabel totalLabel = new JLabel("Total TTC : " + String.format("%.2f €", order.getTotalAmount()));
+        JLabel totalLabel = new JLabel("Total TTC (promo) : " + String.format("%.2f €", totalPromo));
         totalLabel.setFont(new Font("Serif", Font.BOLD, 16));
         totalPanel.add(totalLabel);
         content.add(Box.createRigidArea(new Dimension(0,10)));
@@ -80,19 +110,26 @@ public class InvoiceView extends JFrame {
         setContentPane(new JScrollPane(content));
     }
 
-    /** Méthode utilitaire pour ouvrir directement depuis un contrôleur client */
+    /** Lance l'affichage de la dernière facture d'un utilisateur */
     public static void showInvoiceForUser(User user) {
         List<Order> orders = OrderHistoryDAO.getOrdersForUser(user.getUserId());
         if (orders.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                    "Aucune commande trouvée.",
-                    "Erreur",
-                    JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Aucune commande trouvée.", "Erreur", JOptionPane.WARNING_MESSAGE);
             return;
         }
         Order order = orders.get(0);
         List<OrderDetail> details = OrderHistoryDAO.getOrderDetails(order.getOrderId());
         InvoiceView iv = new InvoiceView(order, details, user.getFirstName());
         iv.setVisible(true);
+    }
+
+    /** méthode main pour tester indépendamment */
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            // Test avec l'utilisateur ID=1
+            User u = UserDAO.findUserById(1);
+            if (u != null) showInvoiceForUser(u);
+            else JOptionPane.showMessageDialog(null, "Utilisateur de test non trouvé.");
+        });
     }
 }
