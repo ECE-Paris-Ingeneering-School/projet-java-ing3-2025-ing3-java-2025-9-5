@@ -2,6 +2,8 @@
 package model;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DiscountDAO {
     private static final String URL = "jdbc:mysql://localhost:3306/shopping";
@@ -79,4 +81,38 @@ public class DiscountDAO {
         }
         return -1;
     }
+    public static List<Discount> getAllDiscounts() {
+        List<Discount> discounts = new ArrayList<>();
+        String sql = "SELECT product_id, bulk_quantity, bulk_price FROM discounts";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int productId = rs.getInt("product_id");
+                int quantity = rs.getInt("bulk_quantity");
+                double bulkPrice = rs.getDouble("bulk_price");
+                discounts.add(new Discount(productId, quantity, bulkPrice));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return discounts;
+    }
+    public static boolean removeDiscountById(int discountId) {
+        String sql = "DELETE FROM discounts WHERE discount_id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, discountId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
 }
