@@ -1,5 +1,5 @@
-package View;
-
+// view/ProductView.java
+package view;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +12,7 @@ import model.ProductDAO;
 import model.ProductSearchDAO;
 import model.Cart;
 import model.User;
+import model.DiscountDAO;
 
 public class ProductView extends JFrame {
     private User currentUser;
@@ -71,14 +72,12 @@ public class ProductView extends JFrame {
         searchButtonPanel.add(searchButton);
 
         // Conteneur de recherche
-        JPanel searchContainer = new JPanel();
-        searchContainer.setLayout(new BorderLayout());
+        JPanel searchContainer = new JPanel(new BorderLayout());
         searchContainer.add(criteriaPanel, BorderLayout.CENTER);
         searchContainer.add(searchButtonPanel, BorderLayout.SOUTH);
 
         // Panneau des produits
-        productsPanel = new JPanel();
-        productsPanel.setLayout(new GridLayout(0, 2, 10, 10));
+        productsPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         JScrollPane scrollPane = new JScrollPane(productsPanel);
 
         // Chargement initial de tous les produits
@@ -92,13 +91,12 @@ public class ProductView extends JFrame {
                 String brand = brandField.getText().trim();
                 double minPrice = parseDouble(minPriceField.getText().trim());
                 double maxPrice = parseDouble(maxPriceField.getText().trim());
-                // Utilisation du DAO de recherche pour filtrer les produits
                 List<Product> filteredProducts = ProductSearchDAO.searchProducts(nameKeyword, brand, minPrice, maxPrice);
                 loadProducts(filteredProducts);
             }
         });
 
-        // Conteneur principal : on place le panneau de recherche en haut, puis la liste des produits
+        // Conteneur principal : recherche en haut, liste des produits
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.add(searchContainer, BorderLayout.NORTH);
         contentPanel.add(scrollPane, BorderLayout.CENTER);
@@ -113,18 +111,41 @@ public class ProductView extends JFrame {
         productsPanel.removeAll();
         for (Product product : products) {
             ProductPanel pp = new ProductPanel(product);
-            pp.getAddToCartButton().addActionListener(e -> {
-                int qty = pp.getSelectedQuantity();  // Récupérer la quantité choisie via le JSpinner
-                Cart.getInstance().addProduct(product, qty);
-                JOptionPane.showMessageDialog(ProductView.this, product.getName() + " (x" + qty + ") ajouté au panier !");
-            });
-            productsPanel.add(pp);
+            // Vérification de la promotion
+            int threshold = DiscountDAO.getBulkQuantity(product.getProductId());
+            double discountedUnit = DiscountDAO.getDiscountedPrice(product.getProductId(), threshold);
+            if (threshold > 0 && discountedUnit > 0) {
+                double original = product.getPrice();
+                double percent = (1 - discountedUnit / original) * 100;
+                JLabel promoLabel = new JLabel(
+                        String.format("Promo: -%.0f%% à partir de %d unités", percent, threshold), SwingConstants.CENTER);
+                promoLabel.setForeground(Color.RED);
+                // Wrap panel et label
+                JPanel wrapper = new JPanel(new BorderLayout());
+                wrapper.add(pp, BorderLayout.CENTER);
+                wrapper.add(promoLabel, BorderLayout.SOUTH);
+                pp.getAddToCartButton().addActionListener(e -> {
+                    int qty = pp.getSelectedQuantity();
+                    Cart.getInstance().addProduct(product, qty);
+                    JOptionPane.showMessageDialog(ProductView.this,
+                            product.getName() + " (x" + qty + ") ajouté au panier !");
+                });
+                productsPanel.add(wrapper);
+            } else {
+                pp.getAddToCartButton().addActionListener(e -> {
+                    int qty = pp.getSelectedQuantity();
+                    Cart.getInstance().addProduct(product, qty);
+                    JOptionPane.showMessageDialog(ProductView.this,
+                            product.getName() + " (x" + qty + ") ajouté au panier !");
+                });
+                productsPanel.add(pp);
+            }
         }
         productsPanel.revalidate();
         productsPanel.repaint();
     }
 
-    // Méthode utilitaire pour convertir une chaîne en double
+    // Méthode utilitaire pour convertir chaîne en double
     private double parseDouble(String s) {
         try {
             return Double.parseDouble(s);

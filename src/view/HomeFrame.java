@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +8,8 @@ public class HomeFrame extends JFrame {
     private JLabel statusLabel;
     private JButton productsButton;
     private JButton cartButton;
+    private JButton logoutButton;  // ← nouveau bouton
+    private JButton historyButton;
 
     public HomeFrame(String userRole) {
         setTitle("Accueil - Application Shopping");
@@ -15,6 +17,7 @@ public class HomeFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        // Bandeau supérieur
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         statusLabel = new JLabel("Connecté en tant que : " + userRole);
         topPanel.add(statusLabel);
@@ -22,10 +25,18 @@ public class HomeFrame extends JFrame {
         cartButton = new JButton("Voir le panier 🛒");
         topPanel.add(cartButton);
 
+        historyButton = new JButton("Historique 📜");
+        topPanel.add(historyButton);
+
+        logoutButton = new JButton("Déconnexion");  // création du bouton
+        topPanel.add(logoutButton);
+
+        // Panneau central
         JPanel centerPanel = new JPanel(new FlowLayout());
         productsButton = new JButton("Consulter les produits");
         centerPanel.add(productsButton);
 
+        setLayout(new BorderLayout());
         add(topPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
     }
@@ -36,5 +47,12 @@ public class HomeFrame extends JFrame {
 
     public void addCartButtonListener(ActionListener listener) {
         cartButton.addActionListener(listener);
+    }
+
+    public void addLogoutButtonListener(ActionListener listener) {
+        logoutButton.addActionListener(listener);
+    }
+    public void addHistoryButtonListener(ActionListener l) {
+        historyButton.addActionListener(l);
     }
 }

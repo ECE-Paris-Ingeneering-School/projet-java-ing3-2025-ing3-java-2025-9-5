@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,6 +16,27 @@ public class ProductDAO {
             e.printStackTrace();
         }
     }
+    public static Product findProductById(int productId) {
+        String query = "SELECT * FROM Products WHERE product_id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, productId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Product(
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getString("brand"),
+                        rs.getDouble("price"),
+                        rs.getString("image_path"),
+                        rs.getString("description")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     // Récupère la liste complète des produits
     public static List<Product> getAllProducts() {
@@ -30,8 +51,8 @@ public class ProductDAO {
                         rs.getString("name"),
                         rs.getString("brand"),
                         rs.getDouble("price"),
-                        rs.getString("image_path"),      // Cette colonne doit exister
-                        rs.getString("description")        // Cette colonne doit exister
+                        rs.getString("image_path"),
+                        rs.getString("description")  
                 );
                 products.add(p);
             }
