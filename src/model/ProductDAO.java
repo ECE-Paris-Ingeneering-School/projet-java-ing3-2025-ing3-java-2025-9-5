@@ -51,8 +51,8 @@ public class ProductDAO {
                         rs.getString("name"),
                         rs.getString("brand"),
                         rs.getDouble("price"),
-                        rs.getString("image_path"),      // Cette colonne doit exister
-                        rs.getString("description")        // Cette colonne doit exister
+                        rs.getString("image_path"),
+                        rs.getString("description")  
                 );
                 products.add(p);
             }

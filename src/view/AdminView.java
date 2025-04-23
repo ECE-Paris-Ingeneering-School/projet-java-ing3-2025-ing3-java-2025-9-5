@@ -1,4 +1,3 @@
-// view/AdminView.java
 package view;
 
 import javax.swing.*;
@@ -91,8 +90,13 @@ public class AdminView extends JFrame {
         discountPercentField = new JTextField();
         discountPanel.add(discountPercentField);
         createDiscountButton = new JButton("Appliquer la réduction");
-        discountTableModel = new DefaultTableModel(new Object[]{"ID","Produit ID","Qté Min","Prix Réduit"}, 0);
-        discountTable.setModel(discountTableModel);discountTable = new JTable(discountTableModel);
+        discountTableModel = new DefaultTableModel(
+                new Object[]{"ID", "Produit ID", "Qté Min", "Prix Réduit"},
+                0
+        );
+        discountTable = new JTable(discountTableModel);
+
+// 2) Encapsulation dans un JScrollPane
         JScrollPane discountScroll = new JScrollPane(discountTable);
         discountScroll.setBorder(BorderFactory.createTitledBorder("Réductions existantes"));
         deleteDiscountButton = new JButton("Supprimer la réduction");
@@ -117,7 +121,6 @@ public class AdminView extends JFrame {
         discountContainer.add(discountScroll, BorderLayout.CENTER);
         discountContainer.add(deleteDiscountButton, BorderLayout.SOUTH);
         bottomLeftPanel.add(discountContainer, BorderLayout.SOUTH);
-
         leftPanel.add(bottomLeftPanel, BorderLayout.SOUTH);
         splitPane.setLeftComponent(leftPanel);
 
