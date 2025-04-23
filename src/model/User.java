@@ -37,8 +37,6 @@ public class User {
         this.userType = userType;
     }
 
-    // Getters et Setters
-
     public int getUserId() {
         return userId;
     }
