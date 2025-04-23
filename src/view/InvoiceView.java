@@ -112,14 +112,23 @@ public class InvoiceView extends JFrame {
 
     /** Lance l'affichage de la dernière facture d'un utilisateur */
     public static void showInvoiceForUser(User user) {
+        // On recharge l'utilisateur depuis la BDD pour récupérer firstName/lastName
+        String clientName = user.getFirstName() + " " + user.getLastName();
+
+        // Récupération de la dernière commande
         List<Order> orders = OrderHistoryDAO.getOrdersForUser(user.getUserId());
         if (orders.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Aucune commande trouvée.", "Erreur", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Aucune commande trouvée.",
+                    "Erreur",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
         Order order = orders.get(0);
         List<OrderDetail> details = OrderHistoryDAO.getOrderDetails(order.getOrderId());
-        InvoiceView iv = new InvoiceView(order, details, user.getFirstName());
+
+        // On passe le nom complet au constructeur
+        InvoiceView iv = new InvoiceView(order, details, clientName);
         iv.setVisible(true);
     }
 
