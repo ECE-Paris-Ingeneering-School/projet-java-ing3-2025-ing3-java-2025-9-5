@@ -35,7 +35,7 @@ public class AdminView extends JFrame {
 
     public AdminView() {
         super("Gestion Produits et Utilisateurs - Admin");
-        setSize(1000, 1000);
+        setSize(1500, 1000);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         initComponents();
@@ -49,7 +49,10 @@ public class AdminView extends JFrame {
 
         // Bandeau supérieur
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        topPanel.setBackground(new Color(70, 130, 180));  // Bleu moyen
         logoutButton = new JButton("Déconnexion");
+        logoutButton.setBackground(new Color(100, 149, 237)); // Bleu bouton
+        logoutButton.setForeground(Color.WHITE);  // Texte blanc
         topPanel.add(logoutButton);
         add(topPanel, BorderLayout.NORTH);
 
@@ -64,7 +67,7 @@ public class AdminView extends JFrame {
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.add(new JScrollPane(productTable), BorderLayout.CENTER);
 
-        JPanel productControlPanel = new JPanel(new GridLayout(3, 4, 10, 10));
+        JPanel productControlPanel = new JPanel(new GridLayout(2, 4, 25, 0));
         productControlPanel.setBorder(BorderFactory.createTitledBorder("Ajouter / Retirer un produit"));
 
         nameField = new JTextField(); brandField = new JTextField(); priceField = new JTextField();
