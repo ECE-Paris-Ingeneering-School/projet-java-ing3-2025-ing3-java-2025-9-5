@@ -13,7 +13,7 @@ public class ProductSearchView extends JFrame {
     private JTextField maxPriceField;
     private JButton searchButton;
     private JTable resultsTable;
-    private ProductTableModel tableModel; // Modèle de table personnalisé pour les produits
+    private ProductTableModel tableModel;
 
     public ProductSearchView() {
         setTitle("Recherche de Produits");
@@ -24,45 +24,66 @@ public class ProductSearchView extends JFrame {
     }
 
     private void initComponents() {
-        JPanel searchPanel = new JPanel(new GridLayout(2, 5, 10, 10));
+        JPanel searchPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+
         searchPanel.setBorder(BorderFactory.createTitledBorder("Critères de recherche"));
 
-        searchPanel.add(new JLabel("Nom:"));
-        nameField = new JTextField();
-        searchPanel.add(nameField);
+        // Nom
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        searchPanel.add(new JLabel("Nom :"), gbc);
+        nameField = new JTextField(15);
+        gbc.gridx = 1;
+        searchPanel.add(nameField, gbc);
 
-        searchPanel.add(new JLabel("Marque:"));
-        brandField = new JTextField();
-        searchPanel.add(brandField);
+        // Marque
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        searchPanel.add(new JLabel("Marque :"), gbc);
+        brandField = new JTextField(15);
+        gbc.gridx = 1;
+        searchPanel.add(brandField, gbc);
 
-        searchPanel.add(new JLabel("")); // Espace vide
+        // Prix min
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        searchPanel.add(new JLabel("Prix min :"), gbc);
+        minPriceField = new JTextField(10);
+        gbc.gridx = 1;
+        searchPanel.add(minPriceField, gbc);
 
-        searchPanel.add(new JLabel("Prix min:"));
-        minPriceField = new JTextField();
-        searchPanel.add(minPriceField);
+        // Prix max
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        searchPanel.add(new JLabel("Prix max :"), gbc);
+        maxPriceField = new JTextField(10);
+        gbc.gridx = 1;
+        searchPanel.add(maxPriceField, gbc);
 
-        searchPanel.add(new JLabel("Prix max:"));
-        maxPriceField = new JTextField();
-        searchPanel.add(maxPriceField);
-
+        // Bouton de recherche
         searchButton = new JButton("Rechercher");
-        searchPanel.add(searchButton);
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.CENTER;
+        searchPanel.add(searchButton, gbc);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(searchPanel, BorderLayout.NORTH);
 
+        // Table des résultats
         tableModel = new ProductTableModel();
         resultsTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(resultsTable);
         getContentPane().add(scrollPane, BorderLayout.CENTER);
     }
 
-    // Méthode permettant d'ajouter l'écouteur au bouton de recherche
     public void addSearchButtonListener(ActionListener listener) {
         searchButton.addActionListener(listener);
     }
 
-    // Getters pour récupérer les critères de recherche saisis
     public String getNameKeyword() {
         return nameField.getText().trim();
     }
@@ -75,7 +96,7 @@ public class ProductSearchView extends JFrame {
         try {
             return Double.parseDouble(minPriceField.getText().trim());
         } catch (NumberFormatException e) {
-            return 0;
+            return 0;  // Ou une autre valeur par défaut ou une gestion d'erreur
         }
     }
 
@@ -83,11 +104,10 @@ public class ProductSearchView extends JFrame {
         try {
             return Double.parseDouble(maxPriceField.getText().trim());
         } catch (NumberFormatException e) {
-            return 0;
+            return Double.MAX_VALUE; // Exemple, ou tu peux aussi gérer l'erreur autrement
         }
     }
 
-    // Méthode pour mettre à jour les résultats de la recherche dans le tableau
     public void updateProductResults(List<Product> products) {
         tableModel.setProducts(products);
     }

@@ -15,9 +15,13 @@ public class HomeFrame extends JFrame {
 
     public HomeFrame(String userRole) {
         setTitle("Accueil - Shopping App");
-        setSize(700, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Configuration de la fenêtre
+        setSize(800, 600); // Si tu veux une taille de base, mais elle sera maximisée
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        // Pour ouvrir la fenêtre en plein écran
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximiser la fenêtre
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());

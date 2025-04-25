@@ -15,9 +15,13 @@ public class CreateAccountView extends JFrame {
 
     public CreateAccountView(String email, String password) {
         super("Créer un compte");
-        setSize(750, 500);
+        // Configuration de la fenêtre
+        setSize(800, 600); // Si tu veux une taille de base, mais elle sera maximisée
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        // Pour ouvrir la fenêtre en plein écran
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximiser la fenêtre
 
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();

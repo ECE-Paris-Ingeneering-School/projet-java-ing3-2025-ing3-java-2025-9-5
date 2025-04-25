@@ -26,9 +26,13 @@ public class ProductView extends JFrame {
     public ProductView(User currentUser) {
         this.currentUser = currentUser;
         setTitle("Liste des Produits");
-        setSize(900, 600);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        // Configuration de la fenêtre
+        setSize(800, 600); // Si tu veux une taille de base, mais elle sera maximisée
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        // Pour ouvrir la fenêtre en plein écran
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximiser la fenêtre
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -36,7 +40,8 @@ public class ProductView extends JFrame {
 
         // Bandeau supérieur avec titre
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setOpaque(false);
+        topPanel.setOpaque(true);  // Assurez-vous que l'opacité est activée
+        topPanel.setBackground(Style.CREAM);  // Ajoutez une couleur de fond
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
         JLabel titleLabel = new JLabel("Produits disponibles");
@@ -55,6 +60,7 @@ public class ProductView extends JFrame {
         // Panneau de critères de recherche
         JPanel criteriaPanel = new JPanel(new GridLayout(2, 4, 10, 10));
         criteriaPanel.setBorder(BorderFactory.createTitledBorder("Critères de recherche"));
+        criteriaPanel.setBackground(Style.CREAM); // Ajoutez une couleur de fond ici
 
         criteriaPanel.add(new JLabel("Nom:"));
         nameField = new JTextField();
@@ -93,7 +99,8 @@ public class ProductView extends JFrame {
 
         // Conteneur principal
         JPanel contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setOpaque(false);
+        contentPanel.setOpaque(true); // Assurez-vous que l'opacité est activée
+        contentPanel.setBackground(Style.CREAM); // Ajoutez une couleur de fond ici
         contentPanel.add(criteriaPanel, BorderLayout.NORTH);
         contentPanel.add(scrollPane, BorderLayout.CENTER);
 
