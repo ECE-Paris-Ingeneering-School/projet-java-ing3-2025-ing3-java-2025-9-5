@@ -1,5 +1,7 @@
 package view;
 
+import utils.Style;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -12,52 +14,101 @@ public class CreateAccountView extends JFrame {
     private final JButton confirmButton;
 
     public CreateAccountView(String email, String password) {
-        super("Création de compte");
+        super("Créer un compte");
         setSize(750, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        JPanel panel = new JPanel(new GridLayout(6, 2, 10, 10));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Message d'information
-        JLabel messageLabel = new JLabel(
-                "<html>Veuillez saisir toutes les informations pour créer un compte.</html>"
-        );
+        JLabel messageLabel = new JLabel("<html>Veuillez saisir toutes les informations pour créer un compte.</html>");
         messageLabel.setForeground(Color.BLUE);
-        panel.add(messageLabel);
-        panel.add(new JLabel()); // filler
+        messageLabel.setFont(new Font("Arial", Font.BOLD, 16));  // Réduction de la taille du message
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;  // Centrage du message sur toute la largeur
+        panel.add(messageLabel, gbc);
 
         // Email
-        panel.add(new JLabel("Email :"));
-        emailField = new JTextField(email);
-        panel.add(emailField);
+        JLabel emailLabel = new JLabel("Email :");
+        Style.styleLabel(emailLabel);
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;  // Aligner le label à gauche
+        panel.add(emailLabel, gbc);
+
+        emailField = new JTextField(20);
+        emailField.setText(email);
+        emailField.setFont(Style.DEFAULT_FONT);
+        gbc.gridx = 1;  // Déplacer le champ à droite
+        panel.add(emailField, gbc);
 
         // Mot de passe
-        panel.add(new JLabel("Mot de passe :"));
-        passwordField = new JPasswordField(password);
-        panel.add(passwordField);
+        JLabel passwordLabel = new JLabel("Mot de passe :");
+        Style.styleLabel(passwordLabel);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(passwordLabel, gbc);
+
+        passwordField = new JPasswordField(20);
+        passwordField.setText(password);
+        passwordField.setFont(Style.DEFAULT_FONT);
+        gbc.gridx = 1;
+        panel.add(passwordField, gbc);
 
         // Prénom
-        panel.add(new JLabel("Prénom *:"));
-        firstNameField = new JTextField();
-        panel.add(firstNameField);
+        JLabel firstNameLabel = new JLabel("Prénom *:");
+        Style.styleLabel(firstNameLabel);
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(firstNameLabel, gbc);
+
+        firstNameField = new JTextField(20);
+        firstNameField.setFont(Style.DEFAULT_FONT);
+        gbc.gridx = 1;
+        panel.add(firstNameField, gbc);
 
         // Nom
-        panel.add(new JLabel("Nom *:"));
-        lastNameField = new JTextField();
-        panel.add(lastNameField);
+        JLabel lastNameLabel = new JLabel("Nom *:");
+        Style.styleLabel(lastNameLabel);
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel.add(lastNameLabel, gbc);
 
-        // Boutons
+        lastNameField = new JTextField(20);
+        lastNameField.setFont(Style.DEFAULT_FONT);
+        gbc.gridx = 1;
+        panel.add(lastNameField, gbc);
+
+        // Panneau des boutons (ajusté pour avoir un espace suffisant)
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setOpaque(false);
+
         confirmButton = new JButton("Valider");
+        Style.styleButton(confirmButton);
+        buttonPanel.add(confirmButton);
+
         JButton cancelButton = new JButton("Annuler");
-        panel.add(confirmButton);
-        panel.add(cancelButton);
+        Style.styleButton(cancelButton);
+        cancelButton.addActionListener(e -> dispose());
+        buttonPanel.add(cancelButton);
+
+        gbc.gridy = 9;
+        gbc.gridwidth = 2;  // Les boutons centrés sur toute la largeur
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(buttonPanel, gbc);
 
         setContentPane(panel);
-
-        // Annuler : ferme la fenêtre, LoginView reste active
-        cancelButton.addActionListener(e -> dispose());
     }
 
     public void addConfirmListener(ActionListener l) {
@@ -67,12 +118,15 @@ public class CreateAccountView extends JFrame {
     public String getFirstName() {
         return firstNameField.getText().trim();
     }
+
     public String getLastName() {
         return lastNameField.getText().trim();
     }
+
     public String getEmail() {
         return emailField.getText().trim();
     }
+
     public String getPassword() {
         return new String(passwordField.getPassword());
     }

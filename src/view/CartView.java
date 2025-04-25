@@ -1,11 +1,4 @@
-// view/CartView.java
 package view;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
 
 import model.Cart;
 import model.CartItem;
@@ -13,6 +6,11 @@ import model.DiscountDAO;
 import model.OrderDAO;
 import model.Product;
 import model.User;
+import utils.Style;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 
 public class CartView extends JFrame {
     private JPanel productsPanel;
@@ -26,34 +24,39 @@ public class CartView extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        // Panneau principal
         JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Panneau pour afficher les produits du panier
+        // Panneau produits
         productsPanel = new JPanel();
         productsPanel.setLayout(new BoxLayout(productsPanel, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(productsPanel);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Panneau du bas pour le total et les boutons d'actions
+        // Panneau du bas pour total et boutons
         JPanel bottomPanel = new JPanel(new BorderLayout());
         totalLabel = new JLabel();
-        totalLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        totalLabel.setFont(Style.BUTTON_FONT);
         bottomPanel.add(totalLabel, BorderLayout.WEST);
 
-        // Panneau pour les boutons
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+        // Panneau des boutons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+        buttonPanel.setOpaque(false);
+
         JButton clearCartButton = new JButton("Vider le panier");
+        Style.styleButton(clearCartButton);
         clearCartButton.addActionListener(e -> {
             Cart.getInstance().clear();
             refreshCart();
         });
 
         JButton orderButton = new JButton("Passer commande");
+        Style.styleButton(orderButton);
         orderButton.addActionListener(e -> {
             boolean success = OrderDAO.placeOrder(user, Cart.getInstance());
             if (success) {
                 JOptionPane.showMessageDialog(CartView.this, "Commande passée avec succès !");
-                // Affiche immédiatement la fenêtre facture, incluant réductions
                 InvoiceView.showInvoiceForUser(user);
                 Cart.getInstance().clear();
                 refreshCart();
@@ -63,6 +66,7 @@ public class CartView extends JFrame {
         });
 
         JButton invoiceButton = new JButton("Générer facture");
+        Style.styleButton(invoiceButton);
         invoiceButton.addActionListener(e -> InvoiceView.showInvoiceForUser(user));
 
         buttonPanel.add(clearCartButton);
@@ -96,7 +100,7 @@ public class CartView extends JFrame {
 
                 JLabel lineLabel;
                 if (threshold > 0 && qty >= threshold && discountedUnit > 0) {
-                    // promotion applicable
+                    // Promotion applicable
                     lineTotal = qty * discountedUnit;
                     grandTotal += lineTotal;
                     String text = String.format(
@@ -115,9 +119,12 @@ public class CartView extends JFrame {
                 }
 
                 JPanel productRow = new JPanel(new BorderLayout());
+                productRow.setOpaque(false);
                 productRow.add(lineLabel, BorderLayout.CENTER);
 
+                // Bouton retirer
                 JButton removeButton = new JButton("Retirer");
+                Style.styleButton(removeButton);
                 removeButton.addActionListener(e -> {
                     Cart.getInstance().removeProduct(p);
                     refreshCart();

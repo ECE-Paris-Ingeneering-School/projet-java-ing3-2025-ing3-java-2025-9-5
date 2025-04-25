@@ -1,9 +1,11 @@
 package view;
 
+import controller.LoginController;
+import utils.Style;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import controller.LoginController;
 
 public class LoginView extends JPanel {
     private JTextField emailField;
@@ -12,26 +14,66 @@ public class LoginView extends JPanel {
     private LoginController controller;
 
     public LoginView() {
-        super(new GridLayout(3, 2, 10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        super(new GridBagLayout());
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        add(new JLabel("Email :"));
-        emailField = new JTextField();
-        add(emailField);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
 
-        add(new JLabel("Mot de passe :"));
-        passwordField = new JPasswordField();
-        add(passwordField);
+        // Titre - Réduction de la taille du texte
+        JLabel titleLabel = new JLabel("Connexion à votre compte");
+        Style.styleTitle(titleLabel);  // Assurez-vous que le style du titre est adapté (taille de police réduite)
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));  // Ajustez la taille ici
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(titleLabel, gbc);
+
+        // Email
+        JLabel emailLabel = new JLabel("Email :");
+        Style.styleLabel(emailLabel);
+        gbc.gridy = 1;
+        add(emailLabel, gbc);
+
+        emailField = new JTextField(20);
+        emailField.setFont(Style.DEFAULT_FONT);
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;  // Assurez-vous que la largeur du champ soit raisonnable
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Pour que le champ occupe la largeur disponible
+        add(emailField, gbc);
+
+        // Mot de passe
+        JLabel passwordLabel = new JLabel("Mot de passe :");
+        Style.styleLabel(passwordLabel);
+        gbc.gridy = 3;
+        add(passwordLabel, gbc);
+
+        passwordField = new JPasswordField(20);
+        passwordField.setFont(Style.DEFAULT_FONT);
+        gbc.gridy = 4;
+        add(passwordField, gbc);
+
+        // Panneau des boutons (ajusté pour avoir un espace suffisant)
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setOpaque(false);
 
         createAccountButton = new JButton("Créer un compte");
-        loginButton = new JButton("Se connecter");
-        add(createAccountButton);
-        add(loginButton);
+        Style.styleButton(createAccountButton);
+        buttonPanel.add(createAccountButton);
 
-        // Au clic, on appelle startCreateAccount, pas directement createAccount
+        loginButton = new JButton("Se connecter");
+        Style.styleButton(loginButton);
+        buttonPanel.add(loginButton);
+
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;  // Le panneau des boutons occupe deux colonnes pour centrer
+        gbc.fill = GridBagConstraints.HORIZONTAL;  // Centrer les boutons
+        add(buttonPanel, gbc);
+
+        // Actions pour les boutons
         createAccountButton.addActionListener(e -> {
             String email = emailField.getText().trim();
-            String pass  = new String(passwordField.getPassword());
+            String pass = new String(passwordField.getPassword());
             controller.startCreateAccount(email, pass);
         });
 
@@ -43,19 +85,19 @@ public class LoginView extends JPanel {
         });
     }
 
-    // Setters pour pré‑remplir/modifier les champs
-    public void setEmail(String email) {
-        emailField.setText(email);
-    }
-    public void setPassword(String password) {
-        passwordField.setText(password);
-    }
-
     public void setController(LoginController controller) {
         this.controller = controller;
     }
 
     public void showMessage(String msg) {
         JOptionPane.showMessageDialog(this, msg);
+    }
+
+    public void setEmail(String email) {
+        emailField.setText(email);
+    }
+
+    public void setPassword(String password) {
+        passwordField.setText(password);
     }
 }

@@ -35,7 +35,7 @@ public class AdminView extends JFrame {
 
     public AdminView() {
         super("Gestion Produits et Utilisateurs - Admin");
-        setSize(1000, 700);
+        setSize(1000, 1000);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         initComponents();
