@@ -1,5 +1,12 @@
 package view;
-
+/**
+ * Vue d'administration principale pour la gestion du magasin.
+ * Fournit une interface Swing permettant de gérer :
+ * - les produits (ajout, suppression, modification),
+ * - les réductions sur produits,
+ * - les utilisateurs (suppression, modification de rôle, consultation de l'historique),
+ * - et l’affichage de statistiques de ventes.
+ */
 import utils.Style;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,6 +16,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.List;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import model.*;
 
 public class AdminView extends JFrame {
@@ -23,6 +38,8 @@ public class AdminView extends JFrame {
     private JButton deleteButton, promoteButton, viewHistoryButton;
     private JButton addButton, removeButton, createDiscountButton, deleteDiscountButton;
     private JButton logoutButton;
+    private JButton statsButton;
+
 
     public AdminView() {
         super("Administration - Gestion du Magasin");
@@ -93,11 +110,24 @@ public class AdminView extends JFrame {
         titleLabel.setForeground(Color.WHITE);
         panel.add(titleLabel, BorderLayout.WEST);
 
+        JPanel eastButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        eastButtons.setOpaque(false);
+
+        statsButton = new JButton("Statistiques");
+        Style.styleButton(statsButton);
+        statsButton.addActionListener(e -> showSalesChart());
+        statsButton.setBackground(new Color(20, 90, 70));
+        statsButton.setForeground(Color.WHITE);
+
         logoutButton = new JButton("Déconnexion");
         Style.styleButton(logoutButton);
         logoutButton.setBackground(new Color(180, 70, 70));
         logoutButton.setForeground(Color.WHITE);
-        panel.add(logoutButton, BorderLayout.EAST);
+
+        eastButtons.add(statsButton);
+        eastButtons.add(logoutButton);
+
+        panel.add(eastButtons, BorderLayout.EAST);
 
         return panel;
     }
@@ -302,7 +332,42 @@ public class AdminView extends JFrame {
             discountTableModel.addRow(new Object[]{d.getDiscountId(), d.getProductId(), d.getBulkQuantity(), String.format("%.2f €", d.getBulkPrice())});
         }
     }
-
+    private void showSalesChart() {
+        // 1) Prépare le dataset
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        String sql =
+                "SELECT p.name AS produit, SUM(od.quantity) AS total_qte " +
+                        "FROM orderdetails od " +
+                        "JOIN products p ON od.product_id = p.product_id " +
+                        "GROUP BY p.product_id, p.name";
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/shopping", "root", "");
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String produit = rs.getString("produit");
+                int qte = rs.getInt("total_qte");
+                dataset.addValue(qte, "Ventes", produit);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Erreur chargement stats : " + ex.getMessage(),
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        // 2) Crée et affiche la fenêtre graphique
+        JFreeChart barChart = ChartFactory.createBarChart(
+                "Ventes par Produit",
+                "Produit",
+                "Quantité vendue",
+                dataset
+        );
+        ChartPanel chartPanel = new ChartPanel(barChart);
+        JFrame chartFrame = new JFrame("Statistiques Ventes");
+        chartFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        chartFrame.setContentPane(chartPanel);
+        chartFrame.pack();
+        chartFrame.setLocationRelativeTo(this);
+        chartFrame.setVisible(true);
+    }
     public void clearFields() {
         nameField.setText("");
         brandField.setText("");

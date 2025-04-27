@@ -7,7 +7,7 @@ public class OrderDAO {
     // Informations de connexion à la base de données
     private static final String URL = "jdbc:mysql://localhost:3306/shopping";
     private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "";
 
     // Chargement du driver JDBC
     static {
