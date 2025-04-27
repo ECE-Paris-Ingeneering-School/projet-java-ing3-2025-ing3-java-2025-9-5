@@ -10,7 +10,7 @@ public class WelcomeView extends JPanel {
         Style.stylePanel(this);
 
         JLabel welcomeLabel = new JLabel("Bienvenue sur Shopping App !");
-        welcomeLabel.setFont(new Font("Serif", Font.BOLD, 22));
+        welcomeLabel.setFont(Style.TITLE_FONT);
         welcomeLabel.setForeground(Style.DEEP_RED);
 
         add(welcomeLabel);

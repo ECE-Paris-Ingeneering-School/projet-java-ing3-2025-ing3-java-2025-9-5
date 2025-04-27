@@ -10,8 +10,6 @@ import utils.Style;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class ProductView extends JFrame {
@@ -26,22 +24,17 @@ public class ProductView extends JFrame {
     public ProductView(User currentUser) {
         this.currentUser = currentUser;
         setTitle("Liste des Produits");
-        // Configuration de la fenêtre
-        setSize(800, 600); // Si tu veux une taille de base, mais elle sera maximisée
+        setSize(800, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        // Pour ouvrir la fenêtre en plein écran
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximiser la fenêtre
-
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout());
         Style.stylePanel(mainPanel);
 
-        // Bandeau supérieur avec titre
+        // Top Panel
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setOpaque(true);  // Assurez-vous que l'opacité est activée
-        topPanel.setBackground(Style.CREAM);  // Ajoutez une couleur de fond
+        topPanel.setBackground(Style.CREAM);
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
         JLabel titleLabel = new JLabel("Produits disponibles");
@@ -57,10 +50,10 @@ public class ProductView extends JFrame {
         });
         topPanel.add(cartButton, BorderLayout.EAST);
 
-        // Panneau de critères de recherche
+        // Search Criteria Panel
         JPanel criteriaPanel = new JPanel(new GridLayout(2, 4, 10, 10));
         criteriaPanel.setBorder(BorderFactory.createTitledBorder("Critères de recherche"));
-        criteriaPanel.setBackground(Style.CREAM); // Ajoutez une couleur de fond ici
+        criteriaPanel.setBackground(Style.CREAM);
 
         criteriaPanel.add(new JLabel("Nom:"));
         nameField = new JTextField();
@@ -78,7 +71,6 @@ public class ProductView extends JFrame {
         maxPriceField = new JTextField();
         criteriaPanel.add(maxPriceField);
 
-        // Bouton de recherche
         searchButton = new JButton("Rechercher");
         Style.styleButton(searchButton);
         searchButton.addActionListener(e -> {
@@ -90,17 +82,17 @@ public class ProductView extends JFrame {
             loadProducts(filteredProducts);
         });
 
-        // Panneau de produits
-        productsPanel = new JPanel(new GridLayout(0, 2, 20, 20));
+        criteriaPanel.add(new JLabel());
+        criteriaPanel.add(searchButton);
+
+        // Products Panel
+        productsPanel = new JPanel(new GridLayout(0, 4, 20, 20)); // 4 colonnes
         productsPanel.setBackground(Style.CREAM);
         JScrollPane scrollPane = new JScrollPane(productsPanel);
 
-        loadProducts(ProductDAO.getAllProducts());
-
-        // Conteneur principal
+        // Content Panel
         JPanel contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setOpaque(true); // Assurez-vous que l'opacité est activée
-        contentPanel.setBackground(Style.CREAM); // Ajoutez une couleur de fond ici
+        contentPanel.setBackground(Style.CREAM);
         contentPanel.add(criteriaPanel, BorderLayout.NORTH);
         contentPanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -108,42 +100,15 @@ public class ProductView extends JFrame {
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
         setContentPane(mainPanel);
+
+        loadProducts(ProductDAO.getAllProducts());
     }
 
     private void loadProducts(List<Product> products) {
         productsPanel.removeAll();
         for (Product product : products) {
-            ProductPanel pp = new ProductPanel(product);
-            int threshold = DiscountDAO.getBulkQuantity(product.getProductId());
-            double discountedUnit = DiscountDAO.getDiscountedPrice(product.getProductId(), threshold);
-
-            if (threshold > 0 && discountedUnit > 0) {
-                double original = product.getPrice();
-                double percent = (1 - discountedUnit / original) * 100;
-                JLabel promoLabel = new JLabel(
-                        String.format("Promo: -%.0f%% à partir de %d unités", percent, threshold), SwingConstants.CENTER);
-                promoLabel.setForeground(Style.SOFT_RED);
-
-                JPanel wrapper = new JPanel(new BorderLayout());
-                wrapper.setBackground(Style.CREAM);
-                wrapper.add(pp, BorderLayout.CENTER);
-                wrapper.add(promoLabel, BorderLayout.SOUTH);
-                pp.getAddToCartButton().addActionListener(e -> {
-                    int qty = pp.getSelectedQuantity();
-                    Cart.getInstance().addProduct(product, qty);
-                    JOptionPane.showMessageDialog(ProductView.this,
-                            product.getName() + " (x" + qty + ") ajouté au panier !");
-                });
-                productsPanel.add(wrapper);
-            } else {
-                pp.getAddToCartButton().addActionListener(e -> {
-                    int qty = pp.getSelectedQuantity();
-                    Cart.getInstance().addProduct(product, qty);
-                    JOptionPane.showMessageDialog(ProductView.this,
-                            product.getName() + " (x" + qty + ") ajouté au panier !");
-                });
-                productsPanel.add(pp);
-            }
+            ProductCard card = new ProductCard(product);
+            productsPanel.add(card);
         }
         productsPanel.revalidate();
         productsPanel.repaint();
@@ -154,6 +119,93 @@ public class ProductView extends JFrame {
             return Double.parseDouble(s);
         } catch (NumberFormatException ex) {
             return 0;
+        }
+    }
+
+    // Classe interne pour représenter une carte produit
+    private class ProductCard extends JPanel {
+        private Product product;
+        private JButton addToCartButton;
+        private JComboBox<Integer> quantityBox;
+
+        public ProductCard(Product product) {
+            this.product = product;
+            setLayout(new BorderLayout());
+            setBackground(Color.WHITE);
+            setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(Style.DEEP_RED, 2),
+                    BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            ));
+            setPreferredSize(new Dimension(250, 400)); // taille de carte
+
+            // Nom du produit en haut
+            JLabel nameLabel = new JLabel(product.getName(), SwingConstants.CENTER);
+            nameLabel.setFont(Style.DEFAULT_FONT);
+            nameLabel.setForeground(Style.DEEP_RED);
+            add(nameLabel, BorderLayout.NORTH);
+
+            // Image au centre
+            JLabel imageLabel = new JLabel();
+            imageLabel.setPreferredSize(new Dimension(200, 150));
+            imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            imageLabel.setVerticalAlignment(SwingConstants.CENTER);
+            imageLabel.setIcon(new ImageIcon(product.getImagePath()));
+            add(imageLabel, BorderLayout.CENTER);
+
+            // Partie basse : infos + bouton
+            JPanel southPanel = new JPanel(new BorderLayout());
+            southPanel.setBackground(Color.WHITE);
+
+            // Infos produit (prix + promo éventuelle)
+            JPanel infoPanel = new JPanel(new GridLayout(0, 1));
+            infoPanel.setBackground(Color.WHITE);
+
+            JLabel priceLabel = new JLabel(String.format("Prix: €%.2f", product.getPrice()), SwingConstants.CENTER);
+            priceLabel.setForeground(Style.DARK_BLUE);
+            infoPanel.add(priceLabel);
+
+            int threshold = DiscountDAO.getBulkQuantity(product.getProductId());
+            double discountedUnit = DiscountDAO.getDiscountedPrice(product.getProductId(), threshold);
+            if (threshold > 0 && discountedUnit > 0) {
+                double original = product.getPrice();
+                double percent = (1 - discountedUnit / original) * 100;
+                JLabel promoLabel = new JLabel(
+                        String.format("Promo: -%.0f%% dès %d unités", percent, threshold),
+                        SwingConstants.CENTER
+                );
+                promoLabel.setForeground(Style.SOFT_RED);
+                infoPanel.add(promoLabel);
+            }
+
+            southPanel.add(infoPanel, BorderLayout.NORTH);
+
+            // Bas : sélection quantité + bouton
+            JPanel bottomPanel = new JPanel(new FlowLayout());
+            bottomPanel.setBackground(Color.WHITE);
+
+            quantityBox = new JComboBox<>();
+            for (int i = 1; i <= 10; i++) {
+                quantityBox.addItem(i);
+            }
+            bottomPanel.add(quantityBox);
+
+            addToCartButton = new JButton("Ajouter au panier");
+            addToCartButton.setBackground(Style.DARK_BLUE);
+            addToCartButton.setForeground(Color.WHITE);
+            addToCartButton.setFocusPainted(false);
+            addToCartButton.addActionListener(e -> {
+                int qty = (int) quantityBox.getSelectedItem();
+                Cart.getInstance().addProduct(product, qty);
+                JOptionPane.showMessageDialog(ProductView.this,
+                        product.getName() + " (x" + qty + ") ajouté au panier !");
+            });
+
+            bottomPanel.add(addToCartButton);
+
+            southPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+            // Ajouter la partie basse complète
+            add(southPanel, BorderLayout.SOUTH);
         }
     }
 }

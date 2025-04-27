@@ -10,7 +10,7 @@ public class Main extends JFrame {
 
     public Main() {
         setTitle("Application Shopping");
-        setSize(400, 300);
+        setSize(600, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 

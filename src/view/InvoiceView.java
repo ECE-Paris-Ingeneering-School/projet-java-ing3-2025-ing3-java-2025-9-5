@@ -1,9 +1,9 @@
-// view/InvoiceView.java
 package view;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -13,31 +13,48 @@ import model.OrderHistoryDAO;
 import model.User;
 import model.DiscountDAO;
 import model.UserDAO;
+import utils.Style;
 
 public class InvoiceView extends JFrame {
+
     public InvoiceView(Order order, List<OrderDetail> details, String clientName) {
         super("Facture n° " + order.getOrderId());
-        setSize(600, 700);
+        setSize(800, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBorder(new EmptyBorder(20, 20, 20, 20));
+        Style.stylePanel(content);
 
         // 1) En-tête
         JLabel title = new JLabel("FACTURE", SwingConstants.CENTER);
-        title.setFont(new Font("Serif", Font.BOLD, 24));
+        Style.styleTitle(title);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
         content.add(title);
 
         // 2) Coordonnées et date
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         JPanel infoPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        Style.stylePanel(infoPanel);
         infoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
-        infoPanel.add(new JLabel("Date : " + order.getOrderDate().format(fmt)));
-        infoPanel.add(new JLabel("Client : " + clientName));
-        infoPanel.add(new JLabel("Facture n° : " + order.getOrderId()));
-        infoPanel.add(new JLabel(" "));
+
+        JLabel dateLabel = new JLabel("Date : " + order.getOrderDate().format(fmt));
+        JLabel clientLabel = new JLabel("Client : " + clientName);
+        JLabel invoiceNumberLabel = new JLabel("Facture n° : " + order.getOrderId());
+        JLabel emptyLabel = new JLabel(" ");
+
+        Style.styleLabel(dateLabel);
+        Style.styleLabel(clientLabel);
+        Style.styleLabel(invoiceNumberLabel);
+        Style.styleLabel(emptyLabel);
+
+        infoPanel.add(dateLabel);
+        infoPanel.add(clientLabel);
+        infoPanel.add(invoiceNumberLabel);
+        infoPanel.add(emptyLabel);
+
         content.add(Box.createRigidArea(new Dimension(0,10)));
         content.add(infoPanel);
 
@@ -72,10 +89,28 @@ public class InvoiceView extends JFrame {
                     String.format("%.2f", promoLine)
             });
         }
+
         JTable table = new JTable(tm);
+        table.setFont(Style.DEFAULT_FONT);
+        table.setForeground(Style.DARK_BLUE);
+        table.setBackground(Style.CREAM);
+        table.setRowHeight(24);
         table.setFillsViewportHeight(true);
+        table.setGridColor(Style.SKY_BLUE);
+        table.setShowGrid(true);
+
+        JTableHeader header = table.getTableHeader();
+        header.setFont(Style.BUTTON_FONT.deriveFont(15f));
+        header.setBackground(Style.SOFT_RED);
+        header.setForeground(Color.WHITE);
+        header.setOpaque(true);
+
+        JScrollPane tableScroll = new JScrollPane(table);
+        tableScroll.setBorder(BorderFactory.createEmptyBorder());
+        tableScroll.getViewport().setBackground(Style.CREAM);
+
         content.add(Box.createRigidArea(new Dimension(0,10)));
-        content.add(new JScrollPane(table));
+        content.add(tableScroll);
 
         // 4) Totaux
         double totalPromo = 0;
@@ -89,10 +124,16 @@ public class InvoiceView extends JFrame {
             double linePromo = (thr > 0 && pp > 0) ? pp * qty : lineNormal;
             totalPromo += linePromo;
         }
+
         JPanel totalPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        Style.stylePanel(totalPanel);
+
         JLabel totalLabel = new JLabel("Total TTC (promo) : " + String.format("%.2f €", totalPromo));
-        totalLabel.setFont(new Font("Serif", Font.BOLD, 16));
+        totalLabel.setFont(Style.BUTTON_FONT.deriveFont(18f));
+        totalLabel.setForeground(Style.DEEP_RED);
+
         totalPanel.add(totalLabel);
+
         content.add(Box.createRigidArea(new Dimension(0,10)));
         content.add(totalPanel);
 
@@ -103,19 +144,25 @@ public class InvoiceView extends JFrame {
                         "TVA non applicable, art. 293B du CGI."
         );
         legal.setEditable(false);
-        legal.setFont(new Font("Serif", Font.ITALIC, 12));
-        legal.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        legal.setFont(Style.DEFAULT_FONT.deriveFont(Font.ITALIC, 12f));
+        legal.setForeground(Style.DARK_BLUE);
+        legal.setBackground(Style.CREAM);
+        legal.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        legal.setLineWrap(true);
+        legal.setWrapStyleWord(true);
+
+        content.add(Box.createRigidArea(new Dimension(0,10)));
         content.add(legal);
 
-        setContentPane(new JScrollPane(content));
+        JScrollPane scrollContent = new JScrollPane(content);
+        scrollContent.setBorder(BorderFactory.createEmptyBorder());
+        scrollContent.getViewport().setBackground(Style.CREAM);
+        setContentPane(scrollContent);
     }
 
-    /** Lance l'affichage de la dernière facture d'un utilisateur */
     public static void showInvoiceForUser(User user) {
-        // On recharge l'utilisateur depuis la BDD pour récupérer firstName/lastName
         String clientName = user.getFirstName() + " " + user.getLastName();
 
-        // Récupération de la dernière commande
         List<Order> orders = OrderHistoryDAO.getOrdersForUser(user.getUserId());
         if (orders.isEmpty()) {
             JOptionPane.showMessageDialog(null,
@@ -127,15 +174,12 @@ public class InvoiceView extends JFrame {
         Order order = orders.get(0);
         List<OrderDetail> details = OrderHistoryDAO.getOrderDetails(order.getOrderId());
 
-        // On passe le nom complet au constructeur
         InvoiceView iv = new InvoiceView(order, details, clientName);
         iv.setVisible(true);
     }
 
-    /** méthode main pour tester indépendamment */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            // Test avec l'utilisateur ID=1
             User u = UserDAO.findUserById(1);
             if (u != null) showInvoiceForUser(u);
             else JOptionPane.showMessageDialog(null, "Utilisateur de test non trouvé.");

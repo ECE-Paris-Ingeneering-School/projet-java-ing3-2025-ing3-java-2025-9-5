@@ -26,18 +26,27 @@ public class CartView extends JFrame {
 
         // Panneau principal
         JPanel mainPanel = new JPanel(new BorderLayout());
+        Style.stylePanel(mainPanel); // <--- STYLE APPLIQUÉ
+
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Panneau produits
         productsPanel = new JPanel();
         productsPanel.setLayout(new BoxLayout(productsPanel, BoxLayout.Y_AXIS));
+        Style.stylePanel(productsPanel); // <--- STYLE APPLIQUÉ SUR PRODUITS
+
         JScrollPane scrollPane = new JScrollPane(productsPanel);
+        scrollPane.getViewport().setBackground(Style.PRIMARY_BG); // <- SCROLLPANE aussi
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Panneau du bas pour total et boutons
         JPanel bottomPanel = new JPanel(new BorderLayout());
+        Style.stylePanel(bottomPanel); // <-- panneau bas aussi
+
         totalLabel = new JLabel();
         totalLabel.setFont(Style.BUTTON_FONT);
+        totalLabel.setForeground(Style.DARK_BLUE);
         bottomPanel.add(totalLabel, BorderLayout.WEST);
 
         // Panneau des boutons
@@ -86,7 +95,10 @@ public class CartView extends JFrame {
         double grandTotal = 0;
 
         if (items.isEmpty()) {
-            productsPanel.add(new JLabel("🛒 Votre panier est vide."));
+            JLabel emptyLabel = new JLabel("🛒 Votre panier est vide.");
+            emptyLabel.setFont(Style.DEFAULT_FONT);
+            emptyLabel.setForeground(Style.DARK_BLUE);
+            productsPanel.add(emptyLabel);
         } else {
             for (CartItem item : items) {
                 Product p = item.getProduct();
@@ -117,6 +129,9 @@ public class CartView extends JFrame {
                     );
                     lineLabel = new JLabel(text);
                 }
+
+                lineLabel.setFont(Style.DEFAULT_FONT);
+                lineLabel.setForeground(Style.DARK_BLUE);
 
                 JPanel productRow = new JPanel(new BorderLayout());
                 productRow.setOpaque(false);
