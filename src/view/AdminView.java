@@ -1,5 +1,12 @@
 package view;
-
+/**
+ * Vue d'administration principale pour la gestion du magasin.
+ * Fournit une interface Swing permettant de gérer :
+ * - les produits (ajout, suppression, modification),
+ * - les réductions sur produits,
+ * - les utilisateurs (suppression, modification de rôle, consultation de l'historique),
+ * - et l’affichage de statistiques de ventes.
+ */
 import utils.Style;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
