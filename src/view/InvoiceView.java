@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Classe représentant la vue de la facture d'une commande.
+ * Cette vue affiche les informations relatives à la commande d'un utilisateur, y compris les détails des articles commandés,
+ * les totaux, ainsi que des informations légales.
+ */
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;

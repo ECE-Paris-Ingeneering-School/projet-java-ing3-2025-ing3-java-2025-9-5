@@ -1,4 +1,9 @@
 package model;
+/**
+ * Modèle représentant un produit dans la boutique.
+ * Contient les informations liées à un produit telles que le nom, la marque,
+ * le prix, la description et le chemin de l'image associée.
+ */
 
 public class Product {
     private int productId;

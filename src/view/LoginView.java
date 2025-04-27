@@ -1,5 +1,10 @@
 package view;
-
+/**
+ * Vue représentant l'écran de connexion de l'application.
+ * Cette vue permet à un utilisateur de se connecter avec son adresse email et son mot de passe,
+ * ou de créer un nouveau compte. Elle est composée de champs pour l'email et le mot de passe,
+ * ainsi que de boutons pour l'action de connexion et la création de compte.
+ */
 import controller.LoginController;
 import utils.Style;
 

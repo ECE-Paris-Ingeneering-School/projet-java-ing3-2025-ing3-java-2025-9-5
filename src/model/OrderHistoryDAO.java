@@ -1,4 +1,9 @@
 package model;
+/**
+ * DAO pour l'historique des commandes.
+ * Permet de récupérer les commandes passées par un utilisateur
+ * ainsi que le détail des produits commandés.
+ */
 
 import java.sql.*;
 import java.time.LocalDateTime;

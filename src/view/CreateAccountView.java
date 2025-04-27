@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Classe représentant la vue pour la création d'un compte utilisateur.
+ * Cette fenêtre permet à un utilisateur de saisir ses informations personnelles (email, mot de passe, prénom, nom)
+ * afin de créer un nouveau compte.
+ */
 import utils.Style;
 
 import javax.swing.*;

@@ -1,5 +1,7 @@
 package model;
-
+/**
+ * Représente une commande client.
+ */
 import java.time.LocalDateTime;
 
 public class Order {

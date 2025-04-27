@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Modèle de table pour afficher les détails d'une commande sous forme de tableau.
+ * Ce modèle de table est utilisé pour gérer et afficher les informations liées aux détails d'une commande,
+ * y compris l'image du produit, l'ID, le nom, la quantité et le prix unitaire.
+ */
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;

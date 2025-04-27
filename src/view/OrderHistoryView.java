@@ -1,5 +1,13 @@
 package view;
-
+/**
+ * Cette classe permet d'afficher l'historique des commandes d'un utilisateur donné
+ * et de visualiser les détails des commandes ainsi que les factures associées.
+ *
+ * Elle comporte :
+ * - Un tableau affichant les commandes de l'utilisateur,
+ * - Un tableau affichant les détails des articles pour la commande sélectionnée,
+ * - Un bouton permettant d'afficher la facture associée à la commande sélectionnée.
+ */
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;

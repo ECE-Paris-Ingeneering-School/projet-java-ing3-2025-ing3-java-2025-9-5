@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Classe représentant la fenêtre d'accueil de l'application Shoppy.
+ * Cette fenêtre affiche des informations générales, des boutons pour accéder aux différentes sections de l'application,
+ * ainsi qu'un carrousel d'annonces promotionnelles.
+ */
 import utils.Style;
 
 import javax.swing.*;

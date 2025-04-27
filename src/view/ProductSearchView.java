@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Fenêtre de recherche de produits permettant aux utilisateurs de filtrer des produits
+ * selon différents critères : nom, marque, prix minimum et prix maximum.
+ * Affiche une liste de produits correspondant aux critères de recherche dans un tableau.
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;

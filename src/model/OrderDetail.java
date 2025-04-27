@@ -1,4 +1,9 @@
 package model;
+/**
+ * Représente le détail d'un produit dans une commande.
+ * Contient les informations sur le produit commandé, sa quantité,
+ * son prix unitaire et son chemin d'image.
+ */
 
 public class OrderDetail {
     private int productId;

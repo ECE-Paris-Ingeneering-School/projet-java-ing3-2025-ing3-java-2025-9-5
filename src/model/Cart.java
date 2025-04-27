@@ -1,5 +1,9 @@
 package model;
-
+/**
+ * Singleton représentant le panier d'achat de l'utilisateur.
+ * Permet d'ajouter, supprimer, vider des produits et de calculer le total.
+ * Utilise le pattern singleton pour garantir une seule instance globale.
+ */
 import java.util.ArrayList;
 import java.util.List;
 
