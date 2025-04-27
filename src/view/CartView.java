@@ -95,7 +95,7 @@ public class CartView extends JFrame {
         double grandTotal = 0;
 
         if (items.isEmpty()) {
-            JLabel emptyLabel = new JLabel("🛒 Votre panier est vide.");
+            JLabel emptyLabel = new JLabel("Votre panier est vide.");
             emptyLabel.setFont(Style.DEFAULT_FONT);
             emptyLabel.setForeground(Style.DARK_BLUE);
             productsPanel.add(emptyLabel);
