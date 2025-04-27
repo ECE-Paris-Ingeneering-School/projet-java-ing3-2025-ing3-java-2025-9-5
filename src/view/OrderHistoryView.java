@@ -12,6 +12,7 @@ import java.util.List;
 import model.Order;
 import model.OrderDetail;
 import model.OrderHistoryDAO;
+import model.DiscountDAO;
 import model.User;
 import utils.Style;
 
@@ -64,7 +65,7 @@ public class OrderHistoryView extends JFrame {
         mainPanel.add(split, BorderLayout.CENTER);
 
         // Bouton pour afficher la facture
-        JButton viewInvoiceBtn = new JButton("Voir Dernière Facture");
+        JButton viewInvoiceBtn = new JButton("Voir la facture");
         Style.styleButton(viewInvoiceBtn);
         JPanel buttonPanel = new JPanel();
         Style.stylePanel(buttonPanel);
@@ -75,29 +76,36 @@ public class OrderHistoryView extends JFrame {
 
         setContentPane(mainPanel);
 
-        viewInvoiceBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int row = ordersTable.getSelectedRow();
-                if (row == -1) {
-                    JOptionPane.showMessageDialog(OrderHistoryView.this,
-                            "Sélectionnez d'abord une commande.",
-                            "Aucune commande sélectionnée",
-                            JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                viewInvoiceForCurrentUser();
+        viewInvoiceBtn.addActionListener(e -> {
+            int row = ordersTable.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(
+                        OrderHistoryView.this,
+                        "Sélectionnez d'abord une commande.",
+                        "Aucune commande sélectionnée",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
             }
+            // Récupère l'objet Order du modèle
+            Order selectedOrder = orderModel.getOrderAt(row);
+            // Récupère ses détails
+            List<OrderDetail> details = OrderHistoryDAO.getOrderDetails(selectedOrder.getOrderId());
+            // Ouvre la facture pour cette commande
+            InvoiceView iv = new InvoiceView(
+                    selectedOrder,
+                    details,
+                    currentUser.getFirstName()
+            );
+            iv.setVisible(true);
         });
 
-        ordersTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting() && ordersTable.getSelectedRow() != -1) {
-                    int selectedRow = ordersTable.getSelectedRow();
-                    int orderId = (Integer) orderModel.getValueAt(selectedRow, 0);
-                    loadDetails(orderId);
-                }
+// Lorsque l’on sélectionne une ligne, on recharge le détail
+        ordersTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && ordersTable.getSelectedRow() != -1) {
+                int selectedRow = ordersTable.getSelectedRow();
+                int orderId = (Integer) orderModel.getValueAt(selectedRow, 0);
+                loadDetails(orderId);
             }
         });
     }

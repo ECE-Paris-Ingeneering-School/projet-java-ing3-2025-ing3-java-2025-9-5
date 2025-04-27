@@ -7,7 +7,7 @@ import java.util.List;
 public class ProductDAO {
     private static final String URL = "jdbc:mysql://localhost:3306/shopping";
     private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "";
 
     static {
         try {
@@ -17,7 +17,7 @@ public class ProductDAO {
         }
     }
     public static Product findProductById(int productId) {
-        String query = "SELECT * FROM Products WHERE product_id = ?";
+        String query = "SELECT * FROM products WHERE product_id = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, productId);
@@ -41,7 +41,7 @@ public class ProductDAO {
     // Récupère la liste complète des produits
     public static List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
-        String query = "SELECT * FROM Products";
+        String query = "SELECT * FROM products";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
@@ -64,7 +64,7 @@ public class ProductDAO {
 
     // Ajoute un produit dans la base
     public static boolean addProduct(Product p) {
-        String query = "INSERT INTO Products (name, brand, price, image_path, description, stock) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO products (name, brand, price, image_path, description, stock) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, p.getName());
@@ -83,7 +83,7 @@ public class ProductDAO {
 
     // Supprime un produit à partir de son identifiant
     public static boolean removeProduct(int productId) {
-        String query = "DELETE FROM Products WHERE product_id = ?";
+        String query = "DELETE FROM products WHERE product_id = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, productId);
