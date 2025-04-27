@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Panneau d'affichage pour un produit dans l'interface graphique.
+ * Ce panneau affiche l'image, le nom, la marque, le prix et la description d'un produit,
+ * ainsi qu'un spinner permettant de sélectionner la quantité et un bouton pour ajouter le produit au panier.
+ */
 import javax.swing.*;
 import java.awt.*;
 

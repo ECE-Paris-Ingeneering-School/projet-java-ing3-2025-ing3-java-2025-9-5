@@ -1,4 +1,8 @@
 package model;
+/**
+ * Classe DAO pour gérer les opérations liées aux utilisateurs dans la base de données.
+ * Permet d'ajouter, de supprimer, de récupérer et de mettre à jour les utilisateurs.
+ */
 
 import java.sql.*;
 import java.util.ArrayList;

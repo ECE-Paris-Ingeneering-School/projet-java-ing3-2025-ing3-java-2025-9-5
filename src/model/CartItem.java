@@ -1,5 +1,8 @@
 package model;
-
+/**
+ * Représente une ligne d’élément dans le panier,
+ * associant un produit à une quantité.
+ */
 public class CartItem {
     // Produit ajouté au panier
     private Product product;

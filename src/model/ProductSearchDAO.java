@@ -1,4 +1,8 @@
 package model;
+/**
+ * Classe DAO pour effectuer des recherches de produits dans la base de données.
+ * Permet de rechercher des produits selon des critères tels que le nom, la marque, et les prix.
+ */
 
 import java.sql.*;
 import java.util.ArrayList;

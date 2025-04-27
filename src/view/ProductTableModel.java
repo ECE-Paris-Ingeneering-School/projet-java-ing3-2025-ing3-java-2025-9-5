@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Modèle de table pour afficher les produits dans un tableau.
+ * Cette classe est utilisée pour gérer les données de produits dans un tableau de résultats
+ * et fournit les informations nécessaires pour l'affichage dans une interface graphique.
+ */
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;

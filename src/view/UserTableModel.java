@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Table model représentant la liste des utilisateurs pour affichage dans un tableau.
+ * Ce modèle est utilisé pour afficher les informations des utilisateurs dans une JTable, telles que leur ID,
+ * prénom, nom, email et rôle (type d'utilisateur).
+ */
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;

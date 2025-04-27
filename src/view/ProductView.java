@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Vue des produits permettant à un utilisateur de rechercher, consulter et ajouter des produits au panier.
+ * Cette fenêtre présente une liste de produits filtrables selon des critères spécifiques (nom, marque, prix).
+ * Les produits sont affichés sous forme de cartes, avec des informations détaillées et la possibilité de les ajouter au panier.
+ */
 import model.Product;
 import model.ProductDAO;
 import model.ProductSearchDAO;

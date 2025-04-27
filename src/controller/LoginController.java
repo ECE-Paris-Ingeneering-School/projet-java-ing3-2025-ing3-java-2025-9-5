@@ -1,5 +1,12 @@
 package controller;
-
+/**
+ * Contrôleur de la vue de connexion.
+ * Gère :
+ * - l’authentification des utilisateurs (client ou admin),
+ * - la création de compte (avec la vue CreateAccountView),
+ * - la navigation vers les vues appropriées après connexion,
+ * - la réouverture de la fenêtre de login après déconnexion.
+ */
 import model.User;
 import model.UserDAO;
 import view.*;

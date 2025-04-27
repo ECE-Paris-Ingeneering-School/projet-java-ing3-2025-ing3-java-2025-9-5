@@ -1,4 +1,9 @@
 package model;
+/**
+ * DAO pour la gestion des commandes clients.
+ * Permet d'enregistrer une commande ainsi que ses détails en base de données
+ * via une transaction sécurisée.
+ */
 
 import java.sql.*;
 import java.util.List;

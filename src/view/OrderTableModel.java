@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Modèle de table pour afficher les commandes d'un utilisateur.
+ * Cette classe est utilisée pour afficher les commandes dans un tableau
+ * avec des informations sur l'ID de la commande, la date et le total après promotion.
+ */
 import javax.swing.table.AbstractTableModel;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;

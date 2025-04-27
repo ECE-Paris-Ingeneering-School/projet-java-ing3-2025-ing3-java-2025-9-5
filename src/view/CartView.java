@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Classe représentant la vue du panier d'achat.
+ * Permet d'afficher les produits dans le panier, d'afficher le total et d'effectuer des actions sur le panier
+ * telles que vider le panier, passer une commande, ou générer une facture.
+ */
 import model.Cart;
 import model.CartItem;
 import model.DiscountDAO;

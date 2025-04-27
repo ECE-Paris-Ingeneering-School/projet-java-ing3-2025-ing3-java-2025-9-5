@@ -1,5 +1,11 @@
 package controller;
-
+/**
+ * Contrôleur pour la vue de recherche de produits.
+ * Gère la liaison entre les entrées de la ProductSearchView
+ * et la DAO de recherche de produits (ProductSearchDAO).
+ * Récupère les critères de recherche (mot-clé, marque, prix min/max)
+ * et met à jour la vue avec les résultats correspondants.
+ */
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;

@@ -1,4 +1,8 @@
 package model;
+/**
+ * Classe DAO pour gérer les opérations de base de données concernant les produits.
+ * Permet de récupérer, ajouter, et supprimer des produits dans la base de données.
+ */
 
 import java.sql.*;
 import java.util.ArrayList;

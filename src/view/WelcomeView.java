@@ -1,5 +1,9 @@
 package view;
-
+/**
+ * Vue d'accueil avec un effet d'animation du texte de bienvenue.
+ * Affiche un message de bienvenue à l'utilisateur avec un effet de "pop" sur chaque lettre.
+ * Après un certain délai, l'écran de login est affiché via un changement de vue.
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
