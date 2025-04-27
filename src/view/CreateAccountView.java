@@ -16,9 +16,11 @@ public class CreateAccountView extends JFrame {
     public CreateAccountView(String email, String password) {
         super("Créer un compte");
         // Configuration de la fenêtre
+
         setSize(800, 600); // Si tu veux une taille de base, mais elle sera maximisée
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setBackground(Style.CREAM);
 
         // Pour ouvrir la fenêtre en plein écran
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximiser la fenêtre
@@ -34,7 +36,7 @@ public class CreateAccountView extends JFrame {
         // Message d'information
         JLabel messageLabel = new JLabel("<html>Veuillez saisir toutes les informations pour créer un compte.</html>");
         messageLabel.setForeground(Color.BLUE);
-        messageLabel.setFont(new Font("Arial", Font.BOLD, 16));  // Réduction de la taille du message
+        messageLabel.setFont(Style.TITLE_FONT);  // Réduction de la taille du message
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;  // Centrage du message sur toute la largeur

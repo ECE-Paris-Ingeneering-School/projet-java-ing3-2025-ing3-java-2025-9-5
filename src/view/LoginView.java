@@ -17,6 +17,7 @@ public class LoginView extends JPanel {
         super(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        setBackground(Style.CREAM);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.CENTER;
@@ -24,7 +25,7 @@ public class LoginView extends JPanel {
         // Titre - Réduction de la taille du texte
         JLabel titleLabel = new JLabel("Connexion à votre compte");
         Style.styleTitle(titleLabel);  // Assurez-vous que le style du titre est adapté (taille de police réduite)
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));  // Ajustez la taille ici
+        titleLabel.setFont(Style.TITLE_FONT);  // Ajustez la taille ici
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(titleLabel, gbc);
