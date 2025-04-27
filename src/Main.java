@@ -10,7 +10,7 @@ public class Main extends JFrame {
 
     public Main() {
         setTitle("Application Shopping");
-        setSize(600, 300);
+        setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -34,8 +34,8 @@ public class Main extends JFrame {
         add(mainPanel);
         setVisible(true);
 
-        // 🔹 Affichage automatique après 1.5s
-        new Timer(1500, e -> cardLayout.show(mainPanel, "Login")).start();
+        // 🔹 Affichage automatique après 3.5s
+        new Timer(3500, e -> cardLayout.show(mainPanel, "Login")).start();
     }
 
     public static void main(String[] args) {

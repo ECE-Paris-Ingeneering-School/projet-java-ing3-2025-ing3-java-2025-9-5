@@ -11,7 +11,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         setTitle("Application Shopping");
-        setSize(400, 300);
+        setSize(600, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         cardLayout = new CardLayout();
