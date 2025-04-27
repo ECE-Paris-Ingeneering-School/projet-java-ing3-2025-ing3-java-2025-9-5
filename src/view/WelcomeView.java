@@ -7,7 +7,7 @@ import utils.Style;
 
 public class WelcomeView extends JPanel {
     private JLabel welcomeLabel;
-    private String welcomeText = "Bienvenue sur Shopping App !"; // Le texte à afficher
+    private String welcomeText = "Bienvenue sur Shoppy !"; // Le texte à afficher
     private int currentCharIndex = 0; // Indice pour suivre quelle lettre afficher
 
     public WelcomeView(Runnable switchToLogin) {

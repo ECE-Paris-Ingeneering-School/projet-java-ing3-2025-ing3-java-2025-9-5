@@ -5,6 +5,9 @@ import utils.Style;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -24,7 +27,7 @@ public class HomeFrame extends JFrame {
     private int currentAnnouncementIndex = 0;
 
     public HomeFrame(String userRole) {
-        setTitle("Accueil - Shopping App");
+        setTitle("Accueil - Shoppy App");
         setSize(800, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -34,15 +37,27 @@ public class HomeFrame extends JFrame {
         mainPanel.setLayout(new BorderLayout());
         Style.stylePanel(mainPanel);
 
-        // Bandeau supérieur
+        // Bandeau supérieur avec logo
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
+        // Ajouter le logo de l'entreprise à gauche
+        JLabel logoLabel = new JLabel();
+        try {
+            Image logoImage = ImageIO.read(new File("src/img/logo.png")).getScaledInstance(100, 100, Image.SCALE_SMOOTH); // Ajustez la taille du logo
+            logoLabel.setIcon(new ImageIcon(logoImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        topPanel.add(logoLabel, BorderLayout.WEST);
+
+        // Ajouter le statut de l'utilisateur
         statusLabel = new JLabel("Connecté en tant que : " + userRole);
         Style.styleLabel(statusLabel);
-        topPanel.add(statusLabel, BorderLayout.WEST);
+        topPanel.add(statusLabel, BorderLayout.CENTER);
 
+        // Panneau avec les boutons à droite
         JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         rightHeaderPanel.setOpaque(false);
         cartButton = new JButton("Panier");
@@ -59,7 +74,7 @@ public class HomeFrame extends JFrame {
 
         topPanel.add(rightHeaderPanel, BorderLayout.EAST);
 
-        // Centre
+        // Centre du panneau
         JPanel centerPanel = new JPanel();
         centerPanel.setOpaque(false);
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
@@ -87,9 +102,20 @@ public class HomeFrame extends JFrame {
         centerPanel.add(announcementLabel);
         centerPanel.add(Box.createVerticalStrut(20));
         centerPanel.add(productsButton);
+        centerPanel.add(Box.createVerticalStrut(30));  // Espacement entre le bouton et l'image
+
+        // Bandeau en bas (soft red)
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(Style.SOFT_RED); // Appliquer le fond de couleur soft red
+        bottomPanel.setPreferredSize(new Dimension(getWidth(), 50)); // Fixer la hauteur du bandeau
+
+        JLabel bottomText = new JLabel("Shoppy -  Votre Application de Shopping en ligne préférée! ");  // Texte ou autre contenu pour le footer
+        bottomText.setForeground(Color.WHITE);
+        bottomPanel.add(bottomText);
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(centerPanel, BorderLayout.CENTER);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);  // Ajouter le bandeau en bas
 
         setContentPane(mainPanel);
 
