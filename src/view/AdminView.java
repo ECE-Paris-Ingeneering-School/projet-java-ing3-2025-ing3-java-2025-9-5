@@ -314,7 +314,6 @@ public class AdminView extends JFrame {
         header.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
 
-    // ... (les autres méthodes restent inchangées)
     public void loadUsers() {
         List<User> users = UserDAO.getAllUsers();
         tableModel.setUsers(users);

@@ -24,7 +24,7 @@ public class CartView extends JFrame {
     public CartView(User user) {
         this.user = user;
         setTitle("Mon Panier");
-        setSize(600, 700);
+        setSize(700, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
