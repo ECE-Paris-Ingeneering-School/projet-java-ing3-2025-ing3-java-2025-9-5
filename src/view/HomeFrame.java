@@ -49,7 +49,7 @@ public class HomeFrame extends JFrame {
         // Ajouter le logo de l'entreprise à gauche
         JLabel logoLabel = new JLabel();
         try {
-            Image logoImage = ImageIO.read(new File("src/img/logo.png")).getScaledInstance(100, 100, Image.SCALE_SMOOTH); 
+            Image logoImage = ImageIO.read(new File("src/img/logo.png")).getScaledInstance(200, 100, Image.SCALE_SMOOTH); 
             logoLabel.setIcon(new ImageIcon(logoImage));
         } catch (IOException e) {
             e.printStackTrace();
