@@ -21,7 +21,7 @@ public class CreateAccountView extends JFrame {
         super("Créer un compte");
         // Configuration de la fenêtre
 
-        setSize(800, 600); // Si tu veux une taille de base, mais elle sera maximisée
+        setSize(800, 600); 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setBackground(Style.CREAM);
@@ -51,7 +51,7 @@ public class CreateAccountView extends JFrame {
         Style.styleLabel(emailLabel);
         gbc.gridy = 1;
         gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.WEST;  // Aligner le label à gauche
+        gbc.anchor = GridBagConstraints.WEST;  
         panel.add(emailLabel, gbc);
 
         emailField = new JTextField(20);
@@ -100,7 +100,7 @@ public class CreateAccountView extends JFrame {
         gbc.gridx = 1;
         panel.add(lastNameField, gbc);
 
-        // Panneau des boutons (ajusté pour avoir un espace suffisant)
+        // Panneau des boutons 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setOpaque(false);
 
