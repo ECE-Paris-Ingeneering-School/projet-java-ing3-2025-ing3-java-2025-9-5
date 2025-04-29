@@ -40,7 +40,7 @@ public class OrderDetailTableModel extends AbstractTableModel {
                 String path = d.getImagePath();
                 if (path != null && !path.isEmpty()) {
                     ImageIcon icon = new ImageIcon(path);
-                    // Optionnel : redimensionner l'icône
+                    
                     Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
                     return new ImageIcon(img);
                 }
