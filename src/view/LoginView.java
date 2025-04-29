@@ -29,8 +29,8 @@ public class LoginView extends JPanel {
 
         // Titre - Réduction de la taille du texte
         JLabel titleLabel = new JLabel("Connexion à votre compte");
-        Style.styleTitle(titleLabel);  // Assurez-vous que le style du titre est adapté (taille de police réduite)
-        titleLabel.setFont(Style.TITLE_FONT);  // Ajustez la taille ici
+        Style.styleTitle(titleLabel);  
+        titleLabel.setFont(Style.TITLE_FONT);  
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(titleLabel, gbc);
@@ -44,8 +44,8 @@ public class LoginView extends JPanel {
         emailField = new JTextField(20);
         emailField.setFont(Style.DEFAULT_FONT);
         gbc.gridy = 2;
-        gbc.gridwidth = 1;  // Assurez-vous que la largeur du champ soit raisonnable
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Pour que le champ occupe la largeur disponible
+        gbc.gridwidth = 1;  
+        gbc.fill = GridBagConstraints.HORIZONTAL; 
         add(emailField, gbc);
 
         // Mot de passe
@@ -59,7 +59,7 @@ public class LoginView extends JPanel {
         gbc.gridy = 4;
         add(passwordField, gbc);
 
-        // Panneau des boutons (ajusté pour avoir un espace suffisant)
+        // Panneau des boutons 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setOpaque(false);
 
